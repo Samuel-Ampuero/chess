@@ -40,5 +40,5 @@ public class ChessBoard {
         throw new RuntimeException("Not implemented");
     }
 
-    //private ChessPiece[] board;
+    private ChessPiece[] board;
 }
