@@ -7,6 +7,8 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessPosition {
+    private int positionX;
+    private int positionY;
 
     public ChessPosition(int row, int col) {
         positionX = row;
@@ -28,7 +30,4 @@ public class ChessPosition {
     public int getColumn() {
         return positionY;
     }
-
-    private int positionX;
-    private int positionY;
 }
