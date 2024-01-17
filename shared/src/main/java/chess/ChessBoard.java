@@ -9,7 +9,7 @@ package chess;
 public class ChessBoard {
 
     public ChessBoard() {
-        board = new ChessPiece[7][7];
+        board = new ChessPiece[8][8];
     }
 
     /**
