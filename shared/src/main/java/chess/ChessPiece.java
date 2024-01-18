@@ -61,7 +61,7 @@ public class ChessPiece {
         } else if (piece.type == PieceType.ROOK){
 
         } else if (piece.type == PieceType.BISHOP){
-
+            System.out.println("FOUND");
         } else if (piece.type == PieceType.KING){
 
         } else if (piece.type == PieceType.QUEEN){
