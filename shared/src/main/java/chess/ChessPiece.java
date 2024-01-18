@@ -79,7 +79,7 @@ public class ChessPiece {
             System.out.println("FOUND");
             System.out.printf("%d, %d", myPosition.getRow(), myPosition.getColumn());
 //            while (true){
-//                if ((myPosition.getRow()+1) <= 8 && (myPosition.getColumn()+1) <= 8 &&
+//                if ((myPosition.getRow()+1) < 8 && (myPosition.getColumn()+1) < 8 &&
 //                        board.getPiece(new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()+1)).pieceColor != piece.pieceColor){
 //                    possibleMoves.add(new ChessMove(new ChessPosition(0,0), new ChessPosition(0,0),null));
 //
