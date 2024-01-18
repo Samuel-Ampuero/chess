@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -15,6 +17,19 @@ public class ChessPiece {
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 
     /**
@@ -52,7 +67,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
-        Collection<ChessMove> possibleMoves;
+        Collection<ChessMove> possibleMoves = new ArrayList<ChessMove>();
 
         if (piece.type == PieceType.PAWN){
 
@@ -62,12 +77,19 @@ public class ChessPiece {
 
         } else if (piece.type == PieceType.BISHOP){
             System.out.println("FOUND");
+            System.out.printf("%d, %d", myPosition.getRow(), myPosition.getColumn());
+//            while (true){
+//                if ((myPosition.getRow()+1) <= 8 && (myPosition.getColumn()+1) <= 8 &&
+//                        board.getPiece(new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()+1)).pieceColor != piece.pieceColor){
+//                    possibleMoves.add(new ChessMove(new ChessPosition(0,0), new ChessPosition(0,0),null));
+//
+//                }
+//            }
         } else if (piece.type == PieceType.KING){
 
         } else if (piece.type == PieceType.QUEEN){
 
         }
-
-        throw new RuntimeException("Not implemented");
+        return possibleMoves;
     }
 }
