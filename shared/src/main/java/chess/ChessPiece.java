@@ -76,14 +76,23 @@ public class ChessPiece {
         } else if (piece.type == PieceType.BISHOP){
             return bishopPiece(board, myPosition, piece);
         } else if (piece.type == PieceType.KING){
-
+            return kingPiece(board, myPosition, piece);
         } else if (piece.type == PieceType.QUEEN){
 
         }
         return null;
     }
 
-    public Collection<ChessMove> bishopPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
+    private void isPossibleMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, Vector<ChessMove> possibleMoves){
+        int tempX = x;
+        int tempY = y;
+        if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
+                (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
+            possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
+            System.out.printf("%d, %d\n", tempX, tempY);
+        }
+    }
+    private Collection<ChessMove> bishopPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
         Vector<ChessMove> possibleMoves = new Vector<>();
         //System.out.println("FOUND"); //testing
         //System.out.printf("Position = %d, %d\nPossibilities:\n", myPosition.getRow(), myPosition.getColumn()); //testing
@@ -173,5 +182,17 @@ public class ChessPiece {
         }
         return possibleMoves;
     }
+    private Collection<ChessMove> kingPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        Vector<ChessMove> possibleMoves = new Vector<>();
+        isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn(),board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow(),myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() - 1,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() - 1,myPosition.getColumn(),board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() - 1,myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow(),myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
 
+        return possibleMoves;
+    }
 }
