@@ -70,7 +70,7 @@ public class ChessPiece {
         if (piece.type == PieceType.PAWN){
 
         } else if (piece.type == PieceType.KNIGHT){
-
+            return knightPiece(board,myPosition,piece);
         } else if (piece.type == PieceType.ROOK){
 
         } else if (piece.type == PieceType.BISHOP){
@@ -193,6 +193,18 @@ public class ChessPiece {
         isPossibleMove(myPosition.getRow(),myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
         isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
 
+        return possibleMoves;
+    }
+    private Collection<ChessMove> knightPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        Vector<ChessMove> possibleMoves = new Vector<>();
+        isPossibleMove(myPosition.getRow() + 2,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() + 2,myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() - 2,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() - 2,myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() - 1,myPosition.getColumn() + 2,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() + 2,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() - 1,myPosition.getColumn() - 2,board,myPosition,piece,possibleMoves);
+        isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() - 2,board,myPosition,piece,possibleMoves);
         return possibleMoves;
     }
 }
