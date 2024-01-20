@@ -92,12 +92,15 @@ public class ChessPiece {
             System.out.printf("%d, %d\n", tempX, tempY);
         }
     }
-    private void isPromotionMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, Vector<ChessMove> possibleMoves,ChessPiece.PieceType promotionPiece){
+    private void isPromotionMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, Vector<ChessMove> possibleMoves){
         int tempX = x;
         int tempY = y;
         if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                 (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
-            possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),promotionPiece));
+            possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.BISHOP));
+            possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.QUEEN));
+            possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.KNIGHT));
+            possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.ROOK));
             System.out.printf("%d, %d\n", tempX, tempY);
         }
     }
@@ -229,10 +232,15 @@ public class ChessPiece {
                 }
             } else if (myPosition.getRow() < 8){
                 if (myPosition.getRow() == 7){
-                    isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves, PieceType.QUEEN);
-                    isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves, PieceType.ROOK);
-                    isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves, PieceType.KNIGHT);
-                    isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves, PieceType.BISHOP);
+                    isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves);
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)).pieceColor == ChessGame.TeamColor.BLACK) {
+                        isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn() + 1, board, myPosition, piece, possibleMoves);
+                    }
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)).pieceColor == ChessGame.TeamColor.BLACK) {
+                        isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn() - 1, board, myPosition, piece, possibleMoves);
+                    }
                 } else {
                     if(board.getPiece(new ChessPosition(myPosition.getRow() + 1,myPosition.getColumn())) == null) {
                         isPossibleMove(myPosition.getRow() + 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves);
@@ -257,10 +265,15 @@ public class ChessPiece {
                 }
             } else if (myPosition.getRow() > 1){
                 if (myPosition.getRow() == 2){
-                    isPromotionMove(myPosition.getRow() - 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves,PieceType.BISHOP);
-                    isPromotionMove(myPosition.getRow() - 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves,PieceType.ROOK);
-                    isPromotionMove(myPosition.getRow() - 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves,PieceType.KNIGHT);
-                    isPromotionMove(myPosition.getRow() - 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves,PieceType.QUEEN);
+                    isPromotionMove(myPosition.getRow() - 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves);
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)).pieceColor == ChessGame.TeamColor.WHITE) {
+                        isPromotionMove(myPosition.getRow() - 1, myPosition.getColumn() - 1, board, myPosition, piece, possibleMoves);
+                    }
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)).pieceColor == ChessGame.TeamColor.WHITE) {
+                        isPromotionMove(myPosition.getRow() - 1, myPosition.getColumn() + 1, board, myPosition, piece, possibleMoves);
+                    }
                 } else {
                     if(board.getPiece(new ChessPosition(myPosition.getRow() - 1,myPosition.getColumn())) == null) {
                         isPossibleMove(myPosition.getRow() - 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves);
