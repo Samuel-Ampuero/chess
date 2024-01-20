@@ -78,7 +78,7 @@ public class ChessPiece {
         } else if (piece.type == PieceType.KING){
             return kingPiece(board, myPosition, piece);
         } else if (piece.type == PieceType.QUEEN){
-
+            return queenPiece(board, myPosition, piece);
         }
         return null;
     }
@@ -101,7 +101,7 @@ public class ChessPiece {
             System.out.printf("%d, %d\n", tempX, tempY);
         }
     }
-    private Collection<ChessMove> bishopPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
+    private Vector<ChessMove> bishopPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
         Vector<ChessMove> possibleMoves = new Vector<>();
         //System.out.println("FOUND"); //testing
         //System.out.printf("Position = %d, %d\nPossibilities:\n", myPosition.getRow(), myPosition.getColumn()); //testing
@@ -191,7 +191,7 @@ public class ChessPiece {
         }
         return possibleMoves;
     }
-    private Collection<ChessMove> kingPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+    private Vector<ChessMove> kingPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
         Vector<ChessMove> possibleMoves = new Vector<>();
         isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn(),board,myPosition,piece,possibleMoves);
         isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
@@ -204,7 +204,7 @@ public class ChessPiece {
 
         return possibleMoves;
     }
-    private Collection<ChessMove> knightPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+    private Vector<ChessMove> knightPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
         Vector<ChessMove> possibleMoves = new Vector<>();
         isPossibleMove(myPosition.getRow() + 2,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
         isPossibleMove(myPosition.getRow() + 2,myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
@@ -216,7 +216,7 @@ public class ChessPiece {
         isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() - 2,board,myPosition,piece,possibleMoves);
         return possibleMoves;
     }
-    private Collection<ChessMove> pawnPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+    private Vector<ChessMove> pawnPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
         Vector<ChessMove> possibleMoves = new Vector<>();
 
         if (piece.pieceColor == ChessGame.TeamColor.WHITE){
@@ -279,7 +279,7 @@ public class ChessPiece {
 
         return possibleMoves;
     }
-    private Collection<ChessMove> rookPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+    private Vector<ChessMove> rookPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
         Vector<ChessMove> possibleMoves = new Vector<>();
         //System.out.println("FOUND"); //testing
         //System.out.printf("Position = %d, %d\nPossibilities:\n", myPosition.getRow(), myPosition.getColumn()); //testing
@@ -365,4 +365,11 @@ public class ChessPiece {
         }
         return possibleMoves;
     }
+    private Vector<ChessMove> queenPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        Vector<ChessMove> possibleMoves = new Vector<>();
+        possibleMoves = bishopPiece(board, myPosition, piece);
+        possibleMoves.addAll(rookPiece(board, myPosition, piece));
+        return possibleMoves;
+    }
+
 }
