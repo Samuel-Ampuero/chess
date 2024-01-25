@@ -89,7 +89,6 @@ public class ChessPiece {
         if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                 (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
             possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-            //System.out.printf("%d, %d\n", tempX, tempY);
         }
     }
     private void isPromotionMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, Vector<ChessMove> possibleMoves){
@@ -101,13 +100,10 @@ public class ChessPiece {
             possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.QUEEN));
             possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.KNIGHT));
             possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.ROOK));
-            //System.out.printf("%d, %d\n", tempX, tempY);
         }
     }
     private Vector<ChessMove> bishopPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
         Vector<ChessMove> possibleMoves = new Vector<>();
-        //System.out.println("FOUND"); //testing
-        //System.out.printf("Position = %d, %d\nPossibilities:\n", myPosition.getRow(), myPosition.getColumn()); //testing
         int tempX = myPosition.getRow();
         int tempY = myPosition.getColumn();
             while (true){
@@ -117,13 +113,8 @@ public class ChessPiece {
                 if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                         (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                     possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-                    //System.out.printf("%d, %d\n", tempX, tempY);
                     if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
-                        if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                            break;
-                        } else if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.WHITE && piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                            break;
-                        }
+                        break;
                     }
                 } else {
                     break;
@@ -138,13 +129,8 @@ public class ChessPiece {
             if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                     (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                 possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-                //System.out.printf("%d, %d\n", tempX, tempY);
                 if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
-                    if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                        break;
-                    } else if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.WHITE && piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                        break;
-                    }
+                    break;
                 }
             } else {
                 break;
@@ -159,13 +145,8 @@ public class ChessPiece {
             if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                     (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                 possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-                //System.out.printf("%d, %d\n", tempX, tempY);
                 if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
-                    if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                        break;
-                    } else if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.WHITE && piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                        break;
-                    }
+                    break;
                 }
             } else {
                 break;
@@ -180,13 +161,8 @@ public class ChessPiece {
             if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                     (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                 possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-               //System.out.printf("%d, %d\n", tempX, tempY);
                 if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
-                    if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                        break;
-                    } else if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.WHITE && piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                        break;
-                    }
+                    break;
                 }
             } else {
                 break;
@@ -294,8 +270,6 @@ public class ChessPiece {
     }
     private Vector<ChessMove> rookPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
         Vector<ChessMove> possibleMoves = new Vector<>();
-        //System.out.println("FOUND"); //testing
-        //System.out.printf("Position = %d, %d\nPossibilities:\n", myPosition.getRow(), myPosition.getColumn()); //testing
         int tempX = myPosition.getRow();
         int tempY = myPosition.getColumn();
         while (true){
@@ -304,13 +278,8 @@ public class ChessPiece {
             if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                     (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                 possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-                //System.out.printf("%d, %d\n", tempX, tempY);
                 if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
-                    if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                        break;
-                    } else if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.WHITE && piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                        break;
-                    }
+                    break;
                 }
             } else {
                 break;
@@ -324,13 +293,8 @@ public class ChessPiece {
             if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                     (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                 possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-                //System.out.printf("%d, %d\n", tempX, tempY);
                 if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
-                    if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                        break;
-                    } else if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.WHITE && piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                        break;
-                    }
+                    break;
                 }
             } else {
                 break;
@@ -344,7 +308,6 @@ public class ChessPiece {
             if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                     (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                 possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-                //System.out.printf("%d, %d\n", tempX, tempY);
                 if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
                     if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
                         break;
@@ -364,13 +327,8 @@ public class ChessPiece {
             if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
                     (board.getPiece(new ChessPosition(tempX,tempY)) == null || board.getPiece(new ChessPosition(tempX,tempY)).pieceColor != piece.pieceColor)){
                 possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
-                //System.out.printf("%d, %d\n", tempX, tempY);
                 if (board.getPiece(new ChessPosition(tempX,tempY)) != null) {
-                    if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.BLACK && piece.pieceColor == ChessGame.TeamColor.WHITE) {
-                        break;
-                    } else if (board.getPiece(new ChessPosition(tempX, tempY)).pieceColor == ChessGame.TeamColor.WHITE && piece.pieceColor == ChessGame.TeamColor.BLACK) {
-                        break;
-                    }
+                    break;
                 }
             } else {
                 break;
