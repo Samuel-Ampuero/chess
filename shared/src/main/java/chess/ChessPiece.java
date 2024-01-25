@@ -2,7 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Represents a single chess piece
@@ -83,7 +83,7 @@ public class ChessPiece {
         return null;
     }
 
-    private void isPossibleMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, Vector<ChessMove> possibleMoves){
+    private void isPossibleMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, ArrayList<ChessMove> possibleMoves){
         int tempX = x;
         int tempY = y;
         if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
@@ -91,7 +91,7 @@ public class ChessPiece {
             possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),null));
         }
     }
-    private void isPromotionMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, Vector<ChessMove> possibleMoves){
+    private void isPromotionMove(int x,int y, ChessBoard board, ChessPosition myPosition, ChessPiece piece, ArrayList<ChessMove> possibleMoves){
         int tempX = x;
         int tempY = y;
         if (tempX <= 8 && tempY <= 8 && tempX > 0 && tempY > 0 &&
@@ -102,8 +102,8 @@ public class ChessPiece {
             possibleMoves.add(new ChessMove(myPosition, new ChessPosition(tempX,tempY),PieceType.ROOK));
         }
     }
-    private Vector<ChessMove> bishopPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
-        Vector<ChessMove> possibleMoves = new Vector<>();
+    private ArrayList<ChessMove> bishopPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece) {
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
         int tempX = myPosition.getRow();
         int tempY = myPosition.getColumn();
             while (true){
@@ -170,8 +170,8 @@ public class ChessPiece {
         }
         return possibleMoves;
     }
-    private Vector<ChessMove> kingPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
-        Vector<ChessMove> possibleMoves = new Vector<>();
+    private ArrayList<ChessMove> kingPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
         isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn(),board,myPosition,piece,possibleMoves);
         isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
         isPossibleMove(myPosition.getRow(),myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
@@ -183,8 +183,8 @@ public class ChessPiece {
 
         return possibleMoves;
     }
-    private Vector<ChessMove> knightPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
-        Vector<ChessMove> possibleMoves = new Vector<>();
+    private ArrayList<ChessMove> knightPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
         isPossibleMove(myPosition.getRow() + 2,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
         isPossibleMove(myPosition.getRow() + 2,myPosition.getColumn() - 1,board,myPosition,piece,possibleMoves);
         isPossibleMove(myPosition.getRow() - 2,myPosition.getColumn() + 1,board,myPosition,piece,possibleMoves);
@@ -195,8 +195,8 @@ public class ChessPiece {
         isPossibleMove(myPosition.getRow() + 1,myPosition.getColumn() - 2,board,myPosition,piece,possibleMoves);
         return possibleMoves;
     }
-    private Vector<ChessMove> pawnPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
-        Vector<ChessMove> possibleMoves = new Vector<>();
+    private ArrayList<ChessMove> pawnPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
 
         if (piece.pieceColor == ChessGame.TeamColor.WHITE){
             if (myPosition.getRow() == 2){
@@ -268,8 +268,8 @@ public class ChessPiece {
 
         return possibleMoves;
     }
-    private Vector<ChessMove> rookPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
-        Vector<ChessMove> possibleMoves = new Vector<>();
+    private ArrayList<ChessMove> rookPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
         int tempX = myPosition.getRow();
         int tempY = myPosition.getColumn();
         while (true){
@@ -336,8 +336,8 @@ public class ChessPiece {
         }
         return possibleMoves;
     }
-    private Vector<ChessMove> queenPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
-        Vector<ChessMove> possibleMoves = new Vector<>();
+    private ArrayList<ChessMove> queenPiece(ChessBoard board, ChessPosition myPosition, ChessPiece piece){
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
         possibleMoves = bishopPiece(board, myPosition, piece);
         possibleMoves.addAll(rookPiece(board, myPosition, piece));
         return possibleMoves;
