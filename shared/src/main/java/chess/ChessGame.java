@@ -77,6 +77,9 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
+        /** Clone board for every move
+         * Get all potential moves
+         */
     }
 
     /**
