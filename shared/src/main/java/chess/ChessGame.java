@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.Collection;
 import java.util.Objects;
@@ -17,6 +18,14 @@ public class ChessGame {
         board = new ChessBoard();
         teamTurn = TeamColor.WHITE;
     }
+    public ChessGame(ChessBoard board, TeamColor teamTurn) {
+        this.board = board;
+        this.teamTurn = teamTurn;
+    }
+     public ChessGame(ChessGame copy){
+        this.board = new ChessBoard(copy.board);
+        this.teamTurn = copy.teamTurn;
+     }
 
     @Override
     public boolean equals(Object o) {
@@ -70,6 +79,9 @@ public class ChessGame {
         return piece.pieceMoves(board, startPosition);
     }
 
+    //FIXME: Create a function that finds a piece on ChessBoard, e.g. KING or ROOK
+
+
     /**
      * Makes a move in a chess game
      *
@@ -77,7 +89,26 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        if (!validMoves.contains(move)){
+            throw new InvalidMoveException("Not a valid move");
+        }
+        if(piece.getTeamColor() != teamTurn) {
+            throw new InvalidMoveException("Not the team's turn");
+        }
+
+
+        if (isInCheck(piece.getTeamColor())){
+            ChessGame copy = new ChessGame(this);
+            copy.board.addPiece(move.getEndPosition(),piece);
+            if (copy.isInCheck(piece.getTeamColor())){
+                throw new InvalidMoveException("King in danger");
+            }
+        }
+
+        board.addPiece(move.getEndPosition(),piece);
+        board.addPiece(move.getStartPosition(),null);
     }
 
     /**

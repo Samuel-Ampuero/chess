@@ -14,6 +14,9 @@ public class ChessBoard {
     public ChessBoard() {
         board = new ChessPiece[8][8];
     }
+    public ChessBoard(ChessBoard board) {
+        this.board = board.board;
+    }
 
     @Override
     public boolean equals(Object o) {
