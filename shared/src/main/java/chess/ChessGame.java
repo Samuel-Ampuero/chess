@@ -109,6 +109,12 @@ public class ChessGame {
 
         board.addPiece(move.getEndPosition(),piece);
         board.addPiece(move.getStartPosition(),null);
+
+        if (teamTurn == TeamColor.WHITE){
+            teamTurn = TeamColor.BLACK;
+        } else if (teamTurn == TeamColor.BLACK){
+            teamTurn = TeamColor.WHITE;
+        }
     }
 
     /**
@@ -133,6 +139,8 @@ public class ChessGame {
                     break;
                 }
             }
+
+            if (king == null){return false;}
 
             for (int i = 1; i <= 8; i++){
                 for (int j = 1; j <= 8; j++){
@@ -163,6 +171,8 @@ public class ChessGame {
                     break;
                 }
             }
+
+            if (king == null){return false;}
 
             for (int i = 1; i <= 8; i++){
                 for (int j = 1; j <= 8; j++){
