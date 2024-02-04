@@ -206,6 +206,18 @@ public class ChessPiece {
                         isPossibleMove(myPosition.getRow() + 2,myPosition.getColumn(),board,myPosition,piece,possibleMoves);
                     }
                 }
+                if(myPosition.getColumn() <= 7) {
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1)).pieceColor == ChessGame.TeamColor.BLACK) {
+                        isPossibleMove(myPosition.getRow() + 1, myPosition.getColumn() + 1, board, myPosition, piece, possibleMoves);
+                    }
+                }
+                if(myPosition.getColumn() > 1) {
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1)).pieceColor == ChessGame.TeamColor.BLACK) {
+                        isPossibleMove(myPosition.getRow() + 1, myPosition.getColumn() - 1, board, myPosition, piece, possibleMoves);
+                    }
+                }
             } else if (myPosition.getRow() < 8){
                 if (myPosition.getRow() == 7){
                     isPromotionMove(myPosition.getRow() + 1, myPosition.getColumn(), board, myPosition, piece, possibleMoves);
@@ -245,6 +257,18 @@ public class ChessPiece {
                     isPossibleMove(myPosition.getRow() - 1,myPosition.getColumn(),board,myPosition,piece,possibleMoves);
                     if(board.getPiece(new ChessPosition(myPosition.getRow() - 2,myPosition.getColumn())) == null) {
                         isPossibleMove(myPosition.getRow() - 2, myPosition.getColumn(), board, myPosition, piece, possibleMoves);
+                    }
+                }
+                if(myPosition.getColumn() > 1) {
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1)).pieceColor == ChessGame.TeamColor.WHITE) {
+                        isPossibleMove(myPosition.getRow() - 1, myPosition.getColumn() - 1, board, myPosition, piece, possibleMoves);
+                    }
+                }
+                if(myPosition.getColumn() <= 7) {
+                    if (board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)) != null &&
+                            board.getPiece(new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1)).pieceColor == ChessGame.TeamColor.WHITE) {
+                        isPossibleMove(myPosition.getRow() - 1, myPosition.getColumn() + 1, board, myPosition, piece, possibleMoves);
                     }
                 }
             } else if (myPosition.getRow() > 1){

@@ -103,12 +103,18 @@ public class ChessGame {
             ChessGame copy = new ChessGame(this);
             copy.board.addPiece(move.getEndPosition(),piece);
             if (copy.isInCheck(piece.getTeamColor())){
+                copy.board.addPiece(move.getEndPosition(),null);
                 throw new InvalidMoveException("King in danger");
             }
         }
 
-        board.addPiece(move.getEndPosition(),piece);
-        board.addPiece(move.getStartPosition(),null);
+        if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
+            board.addPiece(move.getEndPosition(),new ChessPiece(piece.getTeamColor(),move.getPromotionPiece()));
+            board.addPiece(move.getStartPosition(),null);
+        } else {
+            board.addPiece(move.getEndPosition(), piece);
+            board.addPiece(move.getStartPosition(), null);
+        }
 
         if (teamTurn == TeamColor.WHITE){
             teamTurn = TeamColor.BLACK;
