@@ -57,6 +57,27 @@ public class ChessGame{
         BLACK
     }
 
+    //FIXME: Create a function to find kingPosition
+    private ChessPosition getKingPosition(TeamColor teamColor){
+        ChessPosition king = null;
+        for (int i = 1; i <= 8; i++){
+            for (int j = 1; j <= 8; j++){
+                if (board.getPiece(new ChessPosition(i,j)) != null
+                        && board.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING
+                        && board.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
+                    king = new ChessPosition(i,j);
+                    break;
+                }
+            }
+            if (king != null){
+                break;
+            }
+        }
+        return king;
+    }
+
+    //FIXME: Create a function for validMoves when inCheck
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -131,21 +152,7 @@ public class ChessGame{
      */
     public boolean isInCheck(TeamColor teamColor) {
         if (teamColor == TeamColor.WHITE){
-            ChessPosition king = null;
-            for (int i = 1; i <= 8; i++){
-                for (int j = 1; j <= 8; j++){
-                    if (board.getPiece(new ChessPosition(i,j)) != null
-                            && board.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING
-                            && board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.WHITE){
-                        king = new ChessPosition(i,j);
-                        break;
-                    }
-                }
-                if (king != null){
-                    break;
-                }
-            }
-
+            ChessPosition king = getKingPosition(teamColor);
             if (king == null){return false;}
 
             for (int i = 1; i <= 8; i++){
@@ -163,21 +170,7 @@ public class ChessGame{
                 }
             }
         } else if (teamColor == TeamColor.BLACK){
-            ChessPosition king = null;
-            for (int i = 1; i <= 8; i++){
-                for (int j = 1; j <= 8; j++){
-                    if (board.getPiece(new ChessPosition(i,j)) != null
-                            && board.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING
-                            && board.getPiece(new ChessPosition(i,j)).getTeamColor() == TeamColor.BLACK){
-                        king = new ChessPosition(i,j);
-                        break;
-                    }
-                }
-                if (king != null){
-                    break;
-                }
-            }
-
+            ChessPosition king = getKingPosition(teamColor);
             if (king == null){return false;}
 
             for (int i = 1; i <= 8; i++){
