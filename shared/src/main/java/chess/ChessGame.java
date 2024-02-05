@@ -71,20 +71,17 @@ public class ChessGame{
         }
         Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
         ArrayList<ChessMove> actualMoves = new ArrayList<>();
-        if(isInCheck(piece.getTeamColor())){
-            for (ChessMove chessMove : moves){
-                ChessPiece temp = board.getPiece(chessMove.getEndPosition());
-                board.addPiece(chessMove.getEndPosition(), piece);
-                board.addPiece(chessMove.getStartPosition(), null);
-                if (!isInCheck(piece.getTeamColor())) {
-                    actualMoves.add(chessMove);
-                }
-                board.addPiece(chessMove.getStartPosition(), piece);
-                board.addPiece(chessMove.getEndPosition(), temp);
+        for (ChessMove chessMove : moves){
+            ChessPiece temp = board.getPiece(chessMove.getEndPosition());
+            board.addPiece(chessMove.getEndPosition(), piece);
+            board.addPiece(chessMove.getStartPosition(), null);
+            if (!isInCheck(piece.getTeamColor())) {
+                actualMoves.add(chessMove);
             }
-            return actualMoves;
+            board.addPiece(chessMove.getStartPosition(), piece);
+            board.addPiece(chessMove.getEndPosition(), temp);
         }
-        return moves;
+        return actualMoves;
     }
 
     /**
