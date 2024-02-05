@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.Arrays;
-import java.util.Vector;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -72,6 +69,18 @@ public class ChessGame{
         if (piece == null){
             return null;
         }
+        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+//        if(isInCheck(piece.getTeamColor())){
+//            for (ChessMove chessMove : moves){
+//                board.addPiece(chessMove.getEndPosition(), piece);
+//                board.addPiece(chessMove.getStartPosition(), null);
+//                if (!isInCheck(piece.getTeamColor())) {
+//                    moves.add(chessMove);
+//                }
+//                board.addPiece(chessMove.getStartPosition(), piece);
+//                board.addPiece(chessMove.getEndPosition(), null);
+//            }
+//        }
         return piece.pieceMoves(board, startPosition);
     }
 
@@ -198,9 +207,6 @@ public class ChessGame{
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (!isInCheck(teamColor)){
-            return false;
-        }
 
         if (teamColor == TeamColor.WHITE){
             ChessPosition king = null;
@@ -289,7 +295,10 @@ public class ChessGame{
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheckmate(teamColor)) {
+            return true;
+        }
+        return false;
     }
 
     /**
