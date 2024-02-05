@@ -70,21 +70,22 @@ public class ChessGame{
             return null;
         }
         Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
-//        if(isInCheck(piece.getTeamColor())){
-//            for (ChessMove chessMove : moves){
-//                board.addPiece(chessMove.getEndPosition(), piece);
-//                board.addPiece(chessMove.getStartPosition(), null);
-//                if (!isInCheck(piece.getTeamColor())) {
-//                    moves.add(chessMove);
-//                }
-//                board.addPiece(chessMove.getStartPosition(), piece);
-//                board.addPiece(chessMove.getEndPosition(), null);
-//            }
-//        }
-        return piece.pieceMoves(board, startPosition);
+        ArrayList<ChessMove> actualMoves = new ArrayList<>();
+        if(isInCheck(piece.getTeamColor())){
+            for (ChessMove chessMove : moves){
+                ChessPiece temp = board.getPiece(chessMove.getEndPosition());
+                board.addPiece(chessMove.getEndPosition(), piece);
+                board.addPiece(chessMove.getStartPosition(), null);
+                if (!isInCheck(piece.getTeamColor())) {
+                    actualMoves.add(chessMove);
+                }
+                board.addPiece(chessMove.getStartPosition(), piece);
+                board.addPiece(chessMove.getEndPosition(), temp);
+            }
+            return actualMoves;
+        }
+        return moves;
     }
-
-    //FIXME: Create a function that finds a piece on ChessBoard, e.g. KING or ROOK
 
     /**
      * Makes a move in a chess game
@@ -232,15 +233,16 @@ public class ChessGame{
                             && board.getPiece(new ChessPosition(i,j)).getPieceType() != ChessPiece.PieceType.KING) {
                         Collection<ChessMove> tempMoves = validMoves(new ChessPosition(i, j));
                         for (ChessMove chessMove : tempMoves) {
+                            ChessPiece temp = board.getPiece(chessMove.getEndPosition());
                             board.addPiece(chessMove.getEndPosition(), board.getPiece(chessMove.getStartPosition()));
                             board.addPiece(chessMove.getStartPosition(), null);
                             if (!isInCheck(TeamColor.WHITE)) {
                                 board.addPiece(chessMove.getStartPosition(), board.getPiece(chessMove.getEndPosition()));
-                                board.addPiece(chessMove.getEndPosition(), null);
+                                board.addPiece(chessMove.getEndPosition(), temp);
                                 return false;
                             }
                             board.addPiece(chessMove.getStartPosition(), board.getPiece(chessMove.getEndPosition()));
-                            board.addPiece(chessMove.getEndPosition(), null);
+                            board.addPiece(chessMove.getEndPosition(), temp);
                         }
                     }
                 }
