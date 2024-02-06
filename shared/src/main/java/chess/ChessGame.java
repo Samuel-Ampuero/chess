@@ -417,6 +417,25 @@ public class ChessGame{
         blackRookQueenSideMoved = false;
         whiteKingMoved = false;
         blackKingMoved = false;
+
+        if (board.getPiece(new ChessPosition(1,1)) == null || board.getPiece(new ChessPosition(1,1)).getPieceType() != ChessPiece.PieceType.ROOK){
+            whiteRookQueenSideMoved = true;
+        }
+        if (board.getPiece(new ChessPosition(1,8)) == null || board.getPiece(new ChessPosition(1,8)).getPieceType() != ChessPiece.PieceType.ROOK){
+            whiteRookKingSideMoved = true;
+        }
+        if (board.getPiece(new ChessPosition(1,5)) == null || board.getPiece(new ChessPosition(1,5)).getPieceType() != ChessPiece.PieceType.KING){
+            whiteKingMoved = true;
+        }
+        if (board.getPiece(new ChessPosition(8,1)) == null || board.getPiece(new ChessPosition(8,1)).getPieceType() != ChessPiece.PieceType.ROOK){
+            blackRookQueenSideMoved = true;
+        }
+        if (board.getPiece(new ChessPosition(8,8)) == null || board.getPiece(new ChessPosition(8,8)).getPieceType() != ChessPiece.PieceType.ROOK){
+            blackRookKingSideMoved = true;
+        }
+        if (board.getPiece(new ChessPosition(8,5)) == null || board.getPiece(new ChessPosition(8,5)).getPieceType() != ChessPiece.PieceType.KING){
+            blackKingMoved = true;
+        }
     }
 
     /**
