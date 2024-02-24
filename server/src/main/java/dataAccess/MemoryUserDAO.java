@@ -17,10 +17,10 @@ public class MemoryUserDAO implements UserDAO{
         return userDatas;
     }
 
-    public String getUser(String username) throws DataAccessException{
+    public UserData getUser(String username) throws DataAccessException{
         for (UserData elem : userDatas){
             if(Objects.equals(elem.username(), username)){
-                return elem.username();
+                return elem;
             }
         }
         return null;

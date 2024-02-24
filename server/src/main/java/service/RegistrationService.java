@@ -3,7 +3,7 @@ package service;
 import dataAccess.*;
 import model.UserData;
 import request_result.FailureRepsonse;
-import request_result.RegisterResult;
+import request_result.UserResult;
 
 public class RegistrationService {
     public Object register(UserDAO userDAO, UserData userData, AuthDAO authDAO) throws DataAccessException {
@@ -19,9 +19,9 @@ public class RegistrationService {
             }
             userDAO.createUser(userData.username(), userData.password(), userData.email());
             String authToken = authDAO.createAuth(userData.username());
-            return new RegisterResult(userData.username(), authToken);
+            return new UserResult(userData.username(), authToken);
         } catch (DataAccessException err) {
-            return new RegisterResult("Error", "error");
+            return new UserResult("Error", "error");
         }
     }
 }
