@@ -4,15 +4,12 @@ import model.AuthData;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.security.SecureRandom;
-
+import java.util.UUID;
 public class MemoryAuthDAO implements AuthDAO{
     final private Collection<AuthData> authDatas = new ArrayList<>();
     public AuthData createAuth(String username) throws DataAccessException {
-        SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
-        random.nextBytes(bytes);
-        AuthData authData = new AuthData(bytes.toString(), username);
+        UUID uuid = UUID.randomUUID();
+        AuthData authData = new AuthData(uuid.toString().replaceAll("-", ""), username);
         authDatas.add(authData);
         return authData;
     }

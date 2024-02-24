@@ -12,8 +12,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         Spark.awaitInitialization();
-//        return Spark.port();\
-        return -5000;
+        return Spark.port();
     }
 
     public void stop() {
