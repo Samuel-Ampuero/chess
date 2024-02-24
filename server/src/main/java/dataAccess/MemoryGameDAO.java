@@ -6,7 +6,7 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.Collection;
 public class MemoryGameDAO implements GameDAO{
-    final private Collection<GameData> gameDatas = new ArrayList<>();
+    private Collection<GameData> gameDatas = new ArrayList<>();
     private int gameID = 1;
     public int createGame(String gameName) throws DataAccessException {
         GameData gameData = new GameData(gameID,null,null,gameName,new ChessGame());

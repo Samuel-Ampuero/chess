@@ -4,7 +4,7 @@ import model.AuthData;
 
 import java.util.Collection;
 public interface AuthDAO {
-    AuthData  createAuth(String username) throws DataAccessException;
+    String createAuth(String username) throws DataAccessException;
 
     Collection<AuthData> listAuths() throws DataAccessException;
 

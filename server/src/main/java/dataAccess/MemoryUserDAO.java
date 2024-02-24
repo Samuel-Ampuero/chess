@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class MemoryUserDAO implements UserDAO{
-    final private Collection<UserData> userDatas = new ArrayList<>();
+    private Collection<UserData> userDatas = new ArrayList<>();
     public void createUser(String username, String password, String email) throws DataAccessException {
         UserData userData = new UserData(username, password, email);
         userDatas.add(userData);
