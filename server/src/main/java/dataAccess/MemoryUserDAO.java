@@ -4,6 +4,7 @@ import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO{
     private Collection<UserData> userDatas = new ArrayList<>();
@@ -18,7 +19,7 @@ public class MemoryUserDAO implements UserDAO{
 
     public String getUser(String username) throws DataAccessException{
         for (UserData elem : userDatas){
-            if(elem.username() == username){
+            if(Objects.equals(elem.username(), username)){
                 return elem.username();
             }
         }

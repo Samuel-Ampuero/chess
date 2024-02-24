@@ -24,10 +24,10 @@ public class Server {
         return Spark.port();
     }
 
-    public Object registerMethod(Request request, Response response){
+    public Object registerMethod(Request request, Response response) throws DataAccessException {
         UserData user = new Gson().fromJson(request.body(), UserData.class);
         RegistrationService service = new RegistrationService();
-        RegisterResult result = service.register(userMemory, user, authMemory);
+        var result = service.register(userMemory, user, authMemory);
         return new Gson().toJson(result);
     }
 
