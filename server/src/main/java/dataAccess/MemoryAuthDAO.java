@@ -4,6 +4,7 @@ import model.AuthData;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 public class MemoryAuthDAO implements AuthDAO{
     private Collection<AuthData> authDatas = new ArrayList<>();
@@ -21,7 +22,7 @@ public class MemoryAuthDAO implements AuthDAO{
 
     public AuthData getAuth(String authToken) throws DataAccessException{
         for (AuthData elem : authDatas){
-            if(elem.authToken() == authToken){
+            if(Objects.equals(elem.authToken(), authToken)){
                 return elem;
             }
         }
@@ -30,7 +31,7 @@ public class MemoryAuthDAO implements AuthDAO{
 
     public void deleteAuth(String authToken) throws DataAccessException{
         for (AuthData elem : authDatas){
-            if(elem.authToken() == authToken){
+            if(Objects.equals(elem.authToken(), authToken)){
                 authDatas.remove(elem);
                 return;
             }

@@ -7,6 +7,8 @@ import spark.*;
 import dataAccess.*;
 import service.*;
 
+import java.io.Reader;
+
 public class Server {
 
     private AuthDAO authMemory = new MemoryAuthDAO();
@@ -19,6 +21,7 @@ public class Server {
         Spark.staticFiles.location("web");
         Spark.post("/user", this::registerHandler);
         Spark.post("/session", this::loginHandler);
+        Spark.delete("/session", this::logoutHandler);
         // Register your endpoints and handle exceptions here.
 
         Spark.awaitInitialization();
@@ -37,6 +40,15 @@ public class Server {
         var result = service.login(userMemory, user, authMemory);
         return new Gson().toJson(result);
     }
+
+    //FIXME:: HOW TO GRAB THE HEADER???????
+    public Object logoutHandler(Request request, Response response) throws DataAccessException {
+        LogoutRequest authToken = new Gson().fromJson(request.headers(), LogoutRequest.class);
+        LogoutService service = new LogoutService();
+        var result = service.logout(authToken, authMemory);
+        return new Gson().toJson(result);
+    }
+
 
     public void stop() {
         Spark.stop();

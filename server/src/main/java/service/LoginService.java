@@ -13,8 +13,6 @@ public class LoginService {
     public Object login(UserDAO userDAO, LoginRequest loginData, AuthDAO authDAO) throws DataAccessException {
         try{
             if(!Objects.equals(userDAO.getUser(loginData.username()).password(), loginData.password())){
-                System.out.println(userDAO.getUser(loginData.username()).password());
-                System.out.println(loginData.password());
                 return new FailureRepsonse("Error: unauthorized");
             }
             String authToken = authDAO.createAuth(loginData.username());
