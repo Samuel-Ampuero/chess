@@ -21,6 +21,7 @@ public class Server {
         Spark.post("/session", this::loginHandler);
         Spark.delete("/session", this::logoutHandler);
         Spark.get("/game", this::listGamesHandler);
+        Spark.post("/game", this::createGameHandler);
         // Register your endpoints and handle exceptions here.
 
         Spark.awaitInitialization();
@@ -46,13 +47,20 @@ public class Server {
         return new Gson().toJson(result);
     }
 
+    //FIXME:: NEED TO FORMAT THE LIST OF GAMES
     public Object listGamesHandler(Request request, Response response) throws DataAccessException {
         AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
         ListGamesService service = new ListGamesService();
         var result = service.listGames(authToken, authMemory, gameMemory, response);
         return new Gson().toJson(result);
     }
-
+    public Object createGameHandler(Request request, Response response) throws DataAccessException {
+        AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
+        CreateGameRequest game = new Gson().fromJson(request.body(), CreateGameRequest.class);
+        CreateGameService service = new CreateGameService();
+        var result = service.createGame(game, authToken, authMemory, gameMemory, response);
+        return new Gson().toJson(result);
+    }
 
     public void stop() {
         Spark.stop();
