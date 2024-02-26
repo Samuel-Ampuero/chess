@@ -46,8 +46,6 @@ public class Server {
         var result = service.logout(authToken, authMemory, response);
         return new Gson().toJson(result);
     }
-
-    //FIXME:: NEED TO FORMAT THE LIST OF GAMES
     public Object listGamesHandler(Request request, Response response) throws DataAccessException {
         AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
         ListGamesService service = new ListGamesService();
