@@ -7,8 +7,6 @@ import spark.*;
 import dataAccess.*;
 import service.*;
 
-import java.io.Reader;
-
 public class Server {
 
     private AuthDAO authMemory = new MemoryAuthDAO();
@@ -42,8 +40,11 @@ public class Server {
     }
 
     //FIXME:: HOW TO GRAB THE HEADER???????
+    //        System.out.print(data);
     public Object logoutHandler(Request request, Response response) throws DataAccessException {
-        LogoutRequest authToken = new Gson().fromJson(request.headers(), LogoutRequest.class);
+        String data = request.headers("Authorization");
+        LogoutRequest authToken = new Gson().fromJson(data, LogoutRequest.class);
+        System.out.print(authToken.authToken());
         LogoutService service = new LogoutService();
         var result = service.logout(authToken, authMemory);
         return new Gson().toJson(result);
