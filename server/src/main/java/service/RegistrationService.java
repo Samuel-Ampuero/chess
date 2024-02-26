@@ -8,8 +8,6 @@ import spark.Response;
 
 public class RegistrationService {
     public Object register(UserDAO userDAO, UserData userData, AuthDAO authDAO, Response res) throws DataAccessException {
-
-
         try{
             if (userData.username() == null || userData.password() == null || userData.email() == null){
                 res.status(400);

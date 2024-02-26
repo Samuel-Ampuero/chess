@@ -22,6 +22,8 @@ public class Server {
         Spark.delete("/session", this::logoutHandler);
         Spark.get("/game", this::listGamesHandler);
         Spark.post("/game", this::createGameHandler);
+        Spark.put("/game", this::joinGameHandler);
+        Spark.delete("/db", this::clearHandler);
         // Register your endpoints and handle exceptions here.
 
         Spark.awaitInitialization();
@@ -59,7 +61,18 @@ public class Server {
         var result = service.createGame(game, authToken, authMemory, gameMemory, response);
         return new Gson().toJson(result);
     }
-
+    public Object joinGameHandler(Request request, Response response) throws DataAccessException {
+        AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
+        JoinGameRequest jgame = new Gson().fromJson(request.body(), JoinGameRequest.class);
+        JoinGameService service = new JoinGameService();
+        var result = service.joinGame(jgame, authToken, authMemory, gameMemory, response);
+        return new Gson().toJson(result);
+    }
+    public Object clearHandler(Request request, Response response) throws DataAccessException {
+        ClearService service = new ClearService();
+        service.clear(userMemory, authMemory, gameMemory);
+        return "{}";
+    }
     public void stop() {
         Spark.stop();
         Spark.awaitStop();

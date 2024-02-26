@@ -4,9 +4,8 @@ import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 public class MemoryGameDAO implements GameDAO{
-    private Collection<GameData> gameDatas = new ArrayList<>();
+    private ArrayList<GameData> gameDatas = new ArrayList<>();
     private int gameID = 1;
     public int createGame(String gameName) throws DataAccessException {
         GameData gameData = new GameData(gameID,null,null,gameName,new ChessGame());
@@ -14,13 +13,13 @@ public class MemoryGameDAO implements GameDAO{
         return gameID++;
     }
 
-    public Collection<GameData> listGames() throws DataAccessException{
+    public ArrayList<GameData> listGames() throws DataAccessException{
         return gameDatas;
     }
 
-    public GameData getGame(String gameName) throws DataAccessException{
+    public GameData getGame(int gameID) throws DataAccessException{
         for (GameData elem : gameDatas){
-            if(elem.gameName() == gameName){
+            if(elem.gameID() == gameID){
                 return elem;
             }
         }
@@ -28,10 +27,9 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     public void updateGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame){
-        for (GameData elem : gameDatas){
-            if(elem.gameID() == gameID){
-                elem.updateGameData(whiteUsername, blackUsername, gameName, chessGame);
-                return;
+        for (int i = 0; i < gameDatas.size(); i++){
+            if (gameDatas.get(i).gameID() == gameID){
+                gameDatas.set(i, gameDatas.get(i).updateGameData(whiteUsername, blackUsername, gameName, chessGame));
             }
         }
     }
