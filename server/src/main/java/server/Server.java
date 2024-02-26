@@ -7,6 +7,8 @@ import spark.*;
 import dataAccess.*;
 import service.*;
 
+import java.util.Objects;
+
 public class Server {
 
     private AuthDAO authMemory = new MemoryAuthDAO();
@@ -33,39 +35,101 @@ public class Server {
     public Object registerHandler(Request request, Response response) throws DataAccessException {
         UserData user = new Gson().fromJson(request.body(), UserData.class);
         RegistrationService service = new RegistrationService();
-        var result = service.register(userMemory, user, authMemory, response);
+        var result = service.register(userMemory, user, authMemory);
+
+        if (result instanceof FailureRepsonse){
+            if (Objects.equals(((FailureRepsonse) result).message(), "Error: bad request")){
+                response.status(400);
+            } else {
+                response.status(403);
+            }
+        } else {
+            response.status(200);
+        }
+
         return new Gson().toJson(result);
     }
     public Object loginHandler(Request request, Response response) throws DataAccessException {
         LoginRequest user = new Gson().fromJson(request.body(), LoginRequest.class);
         LoginService service = new LoginService();
-        var result = service.login(userMemory, user, authMemory, response);
+        var result = service.login(userMemory, user, authMemory);
+
+        if (result instanceof FailureRepsonse){
+            if (Objects.equals(((FailureRepsonse) result).message(), "Error: unauthorized")){
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
         return new Gson().toJson(result);
     }
     public Object logoutHandler(Request request, Response response) throws DataAccessException {
         AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
         LogoutService service = new LogoutService();
-        var result = service.logout(authToken, authMemory, response);
+        var result = service.logout(authToken, authMemory);
+
+        if (result instanceof FailureRepsonse){
+            if (Objects.equals(((FailureRepsonse) result).message(), "Error: unauthorized")){
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
         return new Gson().toJson(result);
     }
     public Object listGamesHandler(Request request, Response response) throws DataAccessException {
         AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
         ListGamesService service = new ListGamesService();
-        var result = service.listGames(authToken, authMemory, gameMemory, response);
+        var result = service.listGames(authToken, authMemory, gameMemory);
+
+        if (result instanceof FailureRepsonse){
+            if (Objects.equals(((FailureRepsonse) result).message(), "Error: unauthorized")){
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
         return new Gson().toJson(result);
     }
     public Object createGameHandler(Request request, Response response) throws DataAccessException {
         AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
         CreateGameRequest game = new Gson().fromJson(request.body(), CreateGameRequest.class);
         CreateGameService service = new CreateGameService();
-        var result = service.createGame(game, authToken, authMemory, gameMemory, response);
+        var result = service.createGame(game, authToken, authMemory, gameMemory);
+
+        if (result instanceof FailureRepsonse){
+            if (Objects.equals(((FailureRepsonse) result).message(), "Error: bad request")){
+                response.status(400);
+            } else {
+                response.status(401);
+            }
+        } else {
+            response.status(200);
+        }
+
         return new Gson().toJson(result);
     }
     public Object joinGameHandler(Request request, Response response) throws DataAccessException {
         AuthTokenRequest authToken = new AuthTokenRequest(request.headers("Authorization"));
         JoinGameRequest jgame = new Gson().fromJson(request.body(), JoinGameRequest.class);
         JoinGameService service = new JoinGameService();
-        var result = service.joinGame(jgame, authToken, authMemory, gameMemory, response);
+        var result = service.joinGame(jgame, authToken, authMemory, gameMemory);
+
+        if (result instanceof FailureRepsonse){
+            if (Objects.equals(((FailureRepsonse) result).message(), "Error: bad request")){
+                response.status(400);
+            } else if (Objects.equals(((FailureRepsonse) result).message(), "Error: unauthorized")){
+                response.status(401);
+            } else {
+                response.status(403);
+            }
+        } else {
+            response.status(200);
+        }
+
         return new Gson().toJson(result);
     }
     public Object clearHandler(Request request, Response response) throws DataAccessException {

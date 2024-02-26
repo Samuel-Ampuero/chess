@@ -5,16 +5,14 @@ import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
 import request_result.*;
-import spark.Response;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class ListGamesService {
-    public Object listGames(AuthTokenRequest authData, AuthDAO authDAO, GameDAO gameDAO, Response res) throws DataAccessException {
+    public Object listGames(AuthTokenRequest authData, AuthDAO authDAO, GameDAO gameDAO) throws DataAccessException {
         try{
             if(authDAO.getAuth(authData.authToken()) == null){
-                res.status(401);
                 return new FailureRepsonse("Error: unauthorized");
             }
             var games = gameDAO.listGames();
