@@ -3,12 +3,12 @@ package service;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import request_result.FailureRepsonse;
-import request_result.LogoutRequest;
+import request_result.AuthTokenRequest;
 import request_result.UserResult;
 import spark.Response;
 
 public class LogoutService {
-    public Object logout(LogoutRequest logoutData, AuthDAO authDAO, Response res) throws DataAccessException {
+    public Object logout(AuthTokenRequest logoutData, AuthDAO authDAO, Response res) throws DataAccessException {
         try{
             if(authDAO.getAuth(logoutData.authToken()) == null){
                 res.status(401);
