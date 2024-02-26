@@ -25,7 +25,6 @@ public class JoinGameService {
             }
 
             GameData originalGame = gameDAO.getGame(request.gameID());
-            //FIXME:: FINISH
             if (request.playerColor().equals("WHITE")){
                 gameDAO.updateGame(originalGame.gameID(), authDAO.getAuth(authData.authToken()).username(), originalGame.blackUsername(), originalGame.gameName(), originalGame.game());
             } else if (request.playerColor().equals("BLACK")){
