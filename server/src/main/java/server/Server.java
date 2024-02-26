@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import model.UserData;
 import request_result.*;
 import spark.*;
@@ -29,24 +30,22 @@ public class Server {
     public Object registerHandler(Request request, Response response) throws DataAccessException {
         UserData user = new Gson().fromJson(request.body(), UserData.class);
         RegistrationService service = new RegistrationService();
-        var result = service.register(userMemory, user, authMemory);
+        var result = service.register(userMemory, user, authMemory, response);
         return new Gson().toJson(result);
     }
     public Object loginHandler(Request request, Response response) throws DataAccessException {
         LoginRequest user = new Gson().fromJson(request.body(), LoginRequest.class);
         LoginService service = new LoginService();
-        var result = service.login(userMemory, user, authMemory);
+        var result = service.login(userMemory, user, authMemory, response);
         return new Gson().toJson(result);
     }
 
-    //FIXME:: HOW TO GRAB THE HEADER???????
-    //        System.out.print(data);
+    //FIXME:: HOW TO GRAB THE HEADER?
     public Object logoutHandler(Request request, Response response) throws DataAccessException {
         String data = request.headers("Authorization");
-        LogoutRequest authToken = new Gson().fromJson(data, LogoutRequest.class);
-        System.out.print(authToken.authToken());
+        LogoutRequest authToken = new LogoutRequest(data);
         LogoutService service = new LogoutService();
-        var result = service.logout(authToken, authMemory);
+        var result = service.logout(authToken, authMemory, response);
         return new Gson().toJson(result);
     }
 
