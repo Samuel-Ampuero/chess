@@ -287,13 +287,7 @@ public class ChessGame{
                 for (int j = 1; j <= 8; j++){
                     ChessPiece piece = board.getPiece(new ChessPosition(i,j));
                     if (piece != null && piece.getTeamColor() == TeamColor.BLACK){
-                        Collection<ChessMove> moves = piece.pieceMoves(board,new ChessPosition(i,j));
-                        for (ChessMove move : moves){
-                            if (move.getEndPosition().getRow() == king.getRow()
-                                    && move.getEndPosition().getColumn() == king.getColumn()){
-                                return true;
-                            }
-                        }
+                        if (checkEnemyMoves(king, i, j, piece)) return true;
                     }
                 }
             }
@@ -305,15 +299,20 @@ public class ChessGame{
                 for (int j = 1; j <= 8; j++){
                     ChessPiece piece = board.getPiece(new ChessPosition(i,j));
                     if (piece != null && piece.getTeamColor() == TeamColor.WHITE){
-                        Collection<ChessMove> moves = piece.pieceMoves(board,new ChessPosition(i,j));
-                        for (ChessMove move : moves){
-                            if (move.getEndPosition().getRow() == king.getRow()
-                                    && move.getEndPosition().getColumn() == king.getColumn()){
-                                return true;
-                            }
-                        }
+                        if (checkEnemyMoves(king, i, j, piece)) return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkEnemyMoves(ChessPosition king, int i, int j, ChessPiece piece) {
+        Collection<ChessMove> moves = piece.pieceMoves(board,new ChessPosition(i,j));
+        for (ChessMove move : moves){
+            if (move.getEndPosition().getRow() == king.getRow()
+                    && move.getEndPosition().getColumn() == king.getColumn()){
+                return true;
             }
         }
         return false;

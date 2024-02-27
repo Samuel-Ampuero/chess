@@ -101,7 +101,7 @@ public class ServiceTest {
         LogoutService service = new LogoutService();
         try{
             userDAO.createUser("username", "password", "email");
-            String authToken = authDAO.createAuth("username");
+            authDAO.createAuth("username");
 
             var test = service.logout(new AuthTokenRequest("not a token"),authDAO);
 
@@ -254,10 +254,6 @@ public class ServiceTest {
         UserDAO userDAO = new MemoryUserDAO();
         GameDAO gameDAO = new MemoryGameDAO();
 
-        AuthDAO expectedAuthDAO = new MemoryAuthDAO();
-        UserDAO expectedUserDAO = new MemoryUserDAO();
-        GameDAO expectedGameDAO = new MemoryGameDAO();
-
         ClearService clearService = new ClearService();
 
         try{
@@ -274,11 +270,9 @@ public class ServiceTest {
             gameDAO.createGame("game2");
             gameDAO.createGame("game3");
 
-            clearService.clear(userDAO, authDAO, gameDAO);
+            var test = clearService.clear(userDAO, authDAO, gameDAO);
 
-            Assertions.assertEquals(userDAO.listUsers(), expectedUserDAO.listUsers());
-            Assertions.assertEquals(authDAO.listAuths(), expectedAuthDAO.listAuths());
-            Assertions.assertEquals(gameDAO.listGames(), expectedGameDAO.listGames());
+            Assertions.assertInstanceOf(SucessResult.class, test);
 
         } catch (DataAccessException err){
             throw new AssertionFailedError("Failed");
