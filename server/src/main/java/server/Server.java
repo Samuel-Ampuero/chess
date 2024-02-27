@@ -134,8 +134,8 @@ public class Server {
     }
     public Object clearHandler(Request request, Response response) throws DataAccessException {
         ClearService service = new ClearService();
-        service.clear(userMemory, authMemory, gameMemory);
-        return "{}";
+        var result = service.clear(userMemory, authMemory, gameMemory);
+        return new Gson().toJson(result);
     }
     public void stop() {
         Spark.stop();

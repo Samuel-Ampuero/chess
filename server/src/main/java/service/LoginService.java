@@ -12,7 +12,7 @@ import java.util.Objects;
 public class LoginService {
     public Object login(UserDAO userDAO, LoginRequest loginData, AuthDAO authDAO) throws DataAccessException {
         try{
-            if(!Objects.equals(userDAO.getUser(loginData.username()).password(), loginData.password())){
+            if(userDAO.listUsers().isEmpty() || userDAO.getUser(loginData.username()) == null || !Objects.equals(userDAO.getUser(loginData.username()).password(), loginData.password())){
                 return new FailureRepsonse("Error: unauthorized");
             }
             String authToken = authDAO.createAuth(loginData.username());
