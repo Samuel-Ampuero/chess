@@ -5,8 +5,6 @@ import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
 import request_result.*;
-import spark.Response;
-
 import java.util.Objects;
 
 public class JoinGameService {

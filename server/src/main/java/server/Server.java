@@ -135,6 +135,7 @@ public class Server {
     public Object clearHandler(Request request, Response response) throws DataAccessException {
         ClearService service = new ClearService();
         var result = service.clear(userMemory, authMemory, gameMemory);
+        response.status(200);
         return new Gson().toJson(result);
     }
     public void stop() {

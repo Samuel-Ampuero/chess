@@ -34,15 +34,6 @@ public class MemoryGameDAO implements GameDAO{
         }
     }
 
-    public void deleteGame(String gameName) throws DataAccessException{
-        for (GameData elem : gameDatas){
-            if(elem.gameName() == gameName){
-                gameDatas.remove(elem);
-                return;
-            }
-        }
-    }
-
     public void deleteAllGames() throws DataAccessException{
         gameDatas.clear();
     }

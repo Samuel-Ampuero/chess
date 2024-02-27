@@ -16,10 +16,6 @@ public class MemoryAuthDAO implements AuthDAO{
         return authToken;
     }
 
-    public Collection<AuthData> listAuths() throws DataAccessException{
-        return authDatas;
-    }
-
     public AuthData getAuth(String authToken) throws DataAccessException{
         for (AuthData elem : authDatas){
             if(Objects.equals(elem.authToken(), authToken)){
@@ -28,6 +24,11 @@ public class MemoryAuthDAO implements AuthDAO{
         }
         return null;
     }
+
+    public Collection<AuthData> listAuths() throws DataAccessException {
+        return authDatas;
+    }
+
 
     public void deleteAuth(String authToken) throws DataAccessException{
         for (AuthData elem : authDatas){
