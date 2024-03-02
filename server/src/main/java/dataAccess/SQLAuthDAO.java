@@ -20,14 +20,14 @@ public class SQLAuthDAO implements AuthDAO{
         UUID uuid = UUID.randomUUID();
         String authToken = uuid.toString().replaceAll("-", "");
 
-        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        var statement = "INSERT INTO authDatabase (authToken, username) VALUES (?, ?)";
         executeUpdate(statement, authToken, username);
         return authToken;
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
+            var statement = "SELECT authToken, username FROM authDatabase WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (var rs = ps.executeQuery()) {
@@ -46,12 +46,12 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     public void deleteAuth(String authToken) throws DataAccessException{
-        var statement = "DELETE FROM auth WHERE authToken=?";
+        var statement = "DELETE FROM authDatabase WHERE authToken=?";
         executeUpdate(statement, authToken);
     }
 
     public void deleteAllAuths() throws DataAccessException{
-        var statement = "TRUNCATE auth";
+        var statement = "TRUNCATE authDatabase";
         executeUpdate(statement);
     }
 

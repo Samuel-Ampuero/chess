@@ -68,11 +68,22 @@ public class SQLGameDAO implements GameDAO{
         return null;
     }
 
-    public void updateGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame){
-        for (int i = 0; i < gameDatas.size(); i++){
-            if (gameDatas.get(i).gameID() == gameID){
-                gameDatas.set(i, gameDatas.get(i).updateGameData(whiteUsername, blackUsername, gameName, chessGame));
+    public void updateGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) throws DataAccessException{
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "UPDATE gameDatabase " +
+                    "SET whiteUsername=?, blackUsername=?, gameName=?, game=? " +
+                    "WHERE gameID=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, whiteUsername);
+                ps.setString(2, blackUsername);
+                ps.setString(3, gameName);
+                ps.setString(4, new Gson().toJson(chessGame));
+                ps.setInt(5, gameID);
+
+                ps.executeUpdate();
             }
+        } catch (Exception e) {
+            throw new DataAccessException("500: Error");
         }
     }
 

@@ -15,14 +15,14 @@ public class SQLUserDAO implements UserDAO{
         configureDatabase();
     }
     public void createUser(String username, String password, String email) throws DataAccessException {
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        var statement = "INSERT INTO userDatabase (username, password, email) VALUES (?, ?, ?)";
         executeUpdate(statement, username, password, email);
     }
 
     public Collection<UserData> listUsers() throws DataAccessException{
         var result = new ArrayList<UserData>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, password, email FROM user";
+            var statement = "SELECT username, password, email FROM userDatabase";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
@@ -42,7 +42,7 @@ public class SQLUserDAO implements UserDAO{
 
     public UserData getUser(String username) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, password, email FROM user WHERE username=?";
+            var statement = "SELECT username, password, email FROM userDatabase WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
@@ -62,7 +62,7 @@ public class SQLUserDAO implements UserDAO{
     }
 
     public void deleteAllUsers() throws DataAccessException{
-        var statement = "TRUNCATE user";
+        var statement = "TRUNCATE userDatabase";
         executeUpdate(statement);
     }
 

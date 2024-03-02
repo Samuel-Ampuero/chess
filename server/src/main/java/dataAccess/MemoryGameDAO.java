@@ -26,7 +26,7 @@ public class MemoryGameDAO implements GameDAO{
         return null;
     }
 
-    public void updateGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame){
+    public void updateGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) throws DataAccessException{
         for (int i = 0; i < gameDatas.size(); i++){
             if (gameDatas.get(i).gameID() == gameID){
                 gameDatas.set(i, gameDatas.get(i).updateGameData(whiteUsername, blackUsername, gameName, chessGame));
