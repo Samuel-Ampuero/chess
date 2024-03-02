@@ -19,8 +19,9 @@ public class SQLAuthDAO implements AuthDAO{
     public String createAuth(String username) throws DataAccessException {
         UUID uuid = UUID.randomUUID();
         String authToken = uuid.toString().replaceAll("-", "");
-        AuthData authData = new AuthData(authToken, username);
-        authDatas.add(authData);
+
+        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        executeUpdate(statement, authToken, username);
         return authToken;
     }
 
@@ -70,10 +71,9 @@ public class SQLAuthDAO implements AuthDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS auth (
+              `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
+              PRIMARY KEY (`authToken`)
             )
             """
     };
