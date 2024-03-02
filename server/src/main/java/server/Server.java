@@ -10,12 +10,22 @@ import service.*;
 import java.util.Objects;
 
 public class Server {
+    private AuthDAO authMemory;
+    private UserDAO userMemory;
+    private GameDAO gameMemory;
 
-    private AuthDAO authMemory = new MemoryAuthDAO();
-    private UserDAO userMemory = new MemoryUserDAO();
-    private GameDAO gameMemory = new MemoryGameDAO();
+    private void createDAOs() {
+        try {
+            userMemory = new SQLUserDAO();
+            authMemory = new MemoryAuthDAO();
+            gameMemory = new MemoryGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public int run(int desiredPort) {
+        createDAOs();
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
