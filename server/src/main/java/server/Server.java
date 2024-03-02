@@ -17,7 +17,7 @@ public class Server {
     private void createDAOs() {
         try {
             userMemory = new SQLUserDAO();
-            authMemory = new MemoryAuthDAO();
+            authMemory = new SQLAuthDAO();
             gameMemory = new MemoryGameDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
