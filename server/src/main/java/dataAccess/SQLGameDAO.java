@@ -1,7 +1,6 @@
 package dataAccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 
 import com.google.gson.Gson;
@@ -29,9 +28,7 @@ public class SQLGameDAO implements GameDAO{
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        while (rs.next()) {
-                            result.add(readGameData(rs));
-                        }
+                        result.add(readGameData(rs));
                     }
                 }
             }

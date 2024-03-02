@@ -5,7 +5,6 @@ import model.AuthData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.sql.*;
-import java.util.Objects;
 import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
