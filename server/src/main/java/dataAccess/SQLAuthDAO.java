@@ -1,6 +1,7 @@
 package dataAccess;
 
 import model.AuthData;
+import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,10 +27,21 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException{
-        for (AuthData elem : authDatas){
-            if(Objects.equals(elem.authToken(), authToken)){
-                return elem;
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String auth = rs.getString("authToken");
+                        String username = rs.getString("username");
+
+                        return new AuthData(auth, username);
+                    }
+                }
             }
+        } catch (Exception e) {
+            return null;
         }
         return null;
     }
