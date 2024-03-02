@@ -54,6 +54,7 @@ public class SQLAuthDAO implements AuthDAO{
         var statement = "TRUNCATE auth";
         executeUpdate(statement);
     }
+
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
@@ -78,7 +79,7 @@ public class SQLAuthDAO implements AuthDAO{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS auth (
+            CREATE TABLE IF NOT EXISTS authData (
               `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
               PRIMARY KEY (`authToken`)
