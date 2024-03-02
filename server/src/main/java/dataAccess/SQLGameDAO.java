@@ -77,7 +77,8 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public void deleteAllGames() throws DataAccessException{
-        gameDatas.clear();
+        var statement = "TRUNCATE gameDatabase";
+        executeUpdate(statement);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
