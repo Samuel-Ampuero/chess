@@ -1,7 +1,6 @@
 package dataAccess;
 
 import model.AuthData;
-import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,16 +46,13 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     public void deleteAuth(String authToken) throws DataAccessException{
-        for (AuthData elem : authDatas){
-            if(Objects.equals(elem.authToken(), authToken)){
-                authDatas.remove(elem);
-                return;
-            }
-        }
+        var statement = "DELETE FROM auth WHERE authToken=?";
+        executeUpdate(statement, authToken);
     }
 
     public void deleteAllAuths() throws DataAccessException{
-        authDatas.clear();
+        var statement = "TRUNCATE auth";
+        executeUpdate(statement);
     }
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
