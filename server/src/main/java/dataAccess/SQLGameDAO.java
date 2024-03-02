@@ -3,7 +3,8 @@ package dataAccess;
 import chess.ChessGame;
 import model.GameData;
 
-import java.sql.SQLException;
+import com.google.gson.Gson;
+import java.sql.*;
 import java.util.ArrayList;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -14,12 +15,10 @@ public class SQLGameDAO implements GameDAO{
     public SQLGameDAO() throws DataAccessException{
         configureDatabase();
     }
-    private ArrayList<GameData> gameDatas = new ArrayList<>();
-    private int gameID = 1;
     public int createGame(String gameName) throws DataAccessException {
-        GameData gameData = new GameData(gameID,null,null,gameName,new ChessGame());
-        gameDatas.add(gameData);
-        return gameID++;
+        var statement = "INSERT INTO gameDatabase (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+        var game = new Gson().toJson(new ChessGame());
+        return executeUpdate(statement, null, null, gameName, game);
     }
 
     public ArrayList<GameData> listGames() throws DataAccessException{
@@ -73,8 +72,8 @@ public class SQLGameDAO implements GameDAO{
             """
             CREATE TABLE IF NOT EXISTS gameDatabase (
               `gameID` int NOT NULL AUTO_INCREMENT,
-              `whiteUsername` varchar(256) NOT NULL,
-              `blackUsername` varchar(256) NOT NULL,
+              `whiteUsername` varchar(256) DEFAULT NULL,
+              `blackUsername` varchar(256) DEFAULT NULL,
               `gameName` varchar(256) NOT NULL,
               `game` TEXT DEFAULT NULL,
               PRIMARY KEY (`gameID`)
