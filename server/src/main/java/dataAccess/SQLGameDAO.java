@@ -22,7 +22,32 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public ArrayList<GameData> listGames() throws DataAccessException{
-        return gameDatas;
+        var result = new ArrayList<GameData>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameDatabase";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        while (rs.next()) {
+                            result.add(readGameData(rs));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("500: Error");
+        }
+        return result;
+    }
+    private GameData readGameData(ResultSet rs) throws SQLException {
+        var gameID = rs.getInt("gameID");
+        var whiteUsername = rs.getString("whiteUsername");
+        var blackUsername = rs.getString("blackUsername");
+        var gameName = rs.getString("gameName");
+        var game = rs.getString("game");
+
+        var chessGame = new Gson().fromJson(game, ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
     }
 
     public GameData getGame(int gameID) throws DataAccessException{
