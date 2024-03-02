@@ -1,6 +1,7 @@
 package dataAccess;
 
 import chess.ChessGame;
+import model.AuthData;
 import model.GameData;
 
 import com.google.gson.Gson;
@@ -51,10 +52,18 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public GameData getGame(int gameID) throws DataAccessException{
-        for (GameData elem : gameDatas){
-            if(elem.gameID() == gameID){
-                return elem;
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameDatabase WHERE gameID=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGameData(rs);
+                    }
+                }
             }
+        } catch (Exception e) {
+            return null;
         }
         return null;
     }
