@@ -1,20 +1,12 @@
 package dataAccessTests;
 
 import dataAccess.DataAccessException;
-import dataAccess.MemoryUserDAO;
 import dataAccess.SQLUserDAO;
 import dataAccess.UserDAO;
-import model.UserData;
 import org.junit.jupiter.api.*;
-import org.opentest4j.AssertionFailedError;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class UserDAOTests {
-    private UserDAO memory;
     private UserDAO sql;
-
     @BeforeEach
     public void createDatabases(){
         try {
@@ -39,9 +31,8 @@ public class UserDAOTests {
     public void createNegativeTest(){
         try {
             sql.createUser("username", "password", "email");
-            Assertions.assertThrows(DataAccessException.class, () -> {
-                sql.createUser("username", "password", "email");
-            });
+            Assertions.assertThrows(DataAccessException.class, () ->
+                    sql.createUser("username", "password", "email"));
 
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -111,7 +102,7 @@ public class UserDAOTests {
 
     @AfterEach
     @Test
-    public void clearDatabases(){
+    public void clearDatabase(){
         try {
             sql.createUser("test1", "test1", "test1");
             sql.createUser("test2", "test2", "test2");

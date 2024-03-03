@@ -2,8 +2,6 @@ package dataAccess;
 
 import model.AuthData;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.sql.*;
 import java.util.UUID;
 
@@ -14,7 +12,6 @@ public class SQLAuthDAO implements AuthDAO{
     public SQLAuthDAO() throws DataAccessException {
         configureDatabase();
     }
-    private Collection<AuthData> authDatas = new ArrayList<>();
     public String createAuth(String username) throws DataAccessException {
         UUID uuid = UUID.randomUUID();
         String authToken = uuid.toString().replaceAll("-", "");
@@ -45,6 +42,10 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     public void deleteAuth(String authToken) throws DataAccessException{
+        if (authToken == null){
+            throw new DataAccessException("500: ERROR");
+        }
+
         var statement = "DELETE FROM authDatabase WHERE authToken=?";
         executeUpdate(statement, authToken);
     }
