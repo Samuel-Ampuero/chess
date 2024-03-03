@@ -3,6 +3,7 @@ package service;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.UserDAO;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import request_result.FailureRepsonse;
 import request_result.LoginRequest;
 import request_result.UserResult;
@@ -12,7 +13,8 @@ import java.util.Objects;
 public class LoginService {
     public Object login(UserDAO userDAO, LoginRequest loginData, AuthDAO authDAO) throws DataAccessException {
         try{
-            if(userDAO.listUsers().isEmpty() || userDAO.getUser(loginData.username()) == null || !Objects.equals(userDAO.getUser(loginData.username()).password(), loginData.password())){
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if(userDAO.listUsers().isEmpty() || userDAO.getUser(loginData.username()) == null || !encoder.matches(loginData.password(), userDAO.getUser(loginData.username()).password())){
                 return new FailureRepsonse("Error: unauthorized");
             }
             String authToken = authDAO.createAuth(loginData.username());
