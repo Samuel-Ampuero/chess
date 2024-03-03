@@ -66,6 +66,10 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public void updateGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame chessGame) throws DataAccessException{
+        if (getGame(gameID) == null){
+            throw new DataAccessException("500: ERROR");
+        }
+
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "UPDATE gameDatabase " +
                     "SET whiteUsername=?, blackUsername=?, gameName=?, game=? " +

@@ -1,5 +1,7 @@
 package dataAccessTests;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import dataAccess.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -90,6 +92,37 @@ public class GameDAOTests {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Test
+    public void updatePositiveTest(){
+        try {
+            var gameID = sql.createGame("game");
+            var newGame = new ChessGame();
+            var board = new ChessBoard();
+            board.resetBoard();
+            newGame.setBoard(board);
+            sql.updateGame(gameID, "white", "black", "updated", newGame);
+            Assertions.assertEquals(sql.getGame(gameID).gameName(), "updated");
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void updateNegativeTest(){
+        try {
+            var gameID = sql.createGame("game");
+            var newGame = new ChessGame();
+            var board = new ChessBoard();
+            board.resetBoard();
+            newGame.setBoard(board);
+            Assertions.assertThrows(DataAccessException.class, () ->
+                    sql.updateGame(404, null, null, null, null));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterEach
