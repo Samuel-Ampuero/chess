@@ -100,15 +100,15 @@ public class ChessBoardUI extends EscapeSequences {
     }
     public void printBlackChessBoard(){
         for (int i = 1; i <= 8; i++){
-            for (int j = 0; j < 10; j++){
+            for (int j = 9; j >= 0; j--){
                 if (j == 0 || j == 9) {
                     out.print(SET_BG_COLOR_LIGHT_GREY);
                     out.print(SET_TEXT_COLOR_BLACK);
                     out.print("\u2002\u2009" + i + "\u2009\u2002");
                 }
                 else {
-                    if (i % 2 == 0){
-                        if (j % 2 == 1) {
+                    if (i % 2 == 1){
+                        if (j % 2 == 0) {
                             out.print(SET_BG_COLOR_WHITE);
                             out.print(evaluatePiece(i,j));
                         } else {
@@ -116,7 +116,7 @@ public class ChessBoardUI extends EscapeSequences {
                             out.print(evaluatePiece(i,j));
                         }
                     } else {
-                        if (j % 2 == 0) {
+                        if (j % 2 == 1) {
                             out.print(SET_BG_COLOR_WHITE);
                             out.print(evaluatePiece(i,j));
                         } else {
