@@ -26,6 +26,8 @@ public class ChessBoardUI extends EscapeSequences {
         var chess = new ChessGame();
         chess.getBoard().resetBoard();
         ChessBoardUI test = new ChessBoardUI(chess);
+        test.createBlackChessBoard();
+        out.println();
         test.createWhiteChessBoard();
     }
 
@@ -34,7 +36,16 @@ public class ChessBoardUI extends EscapeSequences {
 
         String[] letters = {"\u2002\u2009a\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002\u2009c\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002f\u2009\u2002", "\u2002\u2009g\u2009\u2002", "\u2002h\u2009\u2002"};
         printHeaders(letters);
-        printChessBoard();
+        printWhiteChessBoard();
+        printHeaders(letters);
+    }
+
+    public void createBlackChessBoard(){
+        out.print(ERASE_SCREEN);
+
+        String[] letters = {"\u2002\u2009h\u2009\u2002", "\u2002\u2009g\u2009\u2002", "\u2002\u2009f\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002c\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002a\u2009\u2002"};
+        printHeaders(letters);
+        printBlackChessBoard();
         printHeaders(letters);
     }
 
@@ -54,8 +65,41 @@ public class ChessBoardUI extends EscapeSequences {
         out.println();
     }
 
-    public void printChessBoard(){
+    public void printWhiteChessBoard(){
         for (int i = 8; i > 0; i--){
+            for (int j = 0; j < 10; j++){
+                if (j == 0 || j == 9) {
+                    out.print(SET_BG_COLOR_LIGHT_GREY);
+                    out.print(SET_TEXT_COLOR_BLACK);
+                    out.print("\u2002\u2009" + i + "\u2009\u2002");
+                }
+                else {
+                    if (i % 2 == 0){
+                        if (j % 2 == 1) {
+                            out.print(SET_BG_COLOR_WHITE);
+                            out.print(evaluatePiece(i,j));
+                        } else {
+                            out.print(SET_BG_COLOR_GREEN);
+                            out.print(evaluatePiece(i,j));
+                        }
+                    } else {
+                        if (j % 2 == 0) {
+                            out.print(SET_BG_COLOR_WHITE);
+                            out.print(evaluatePiece(i,j));
+                        } else {
+                            out.print(SET_BG_COLOR_GREEN);
+                            out.print(evaluatePiece(i,j));
+                        }
+                    }
+
+                }
+            }
+            out.print(SET_BG_COLOR_BLACK);
+            out.println();
+        }
+    }
+    public void printBlackChessBoard(){
+        for (int i = 1; i <= 8; i++){
             for (int j = 0; j < 10; j++){
                 if (j == 0 || j == 9) {
                     out.print(SET_BG_COLOR_LIGHT_GREY);
