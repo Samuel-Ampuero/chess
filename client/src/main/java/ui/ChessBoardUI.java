@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +32,7 @@ public class ChessBoardUI extends EscapeSequences {
     public void createWhiteChessBoard(){
         out.print(ERASE_SCREEN);
 
-        String[] letters = {"\u2002\u2009a\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002\u2009c\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002f\u2009\u2002", "\u2009\u2009\u2009g\u2009\u2002", "\u2009\u2009\u2009h\u2009\u2002"};
+        String[] letters = {"\u2002\u2009a\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002\u2009c\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002f\u2009\u2002", "\u2002\u2009g\u2009\u2002", "\u2002h\u2009\u2002"};
         printHeaders(letters);
         printChessBoard();
         printHeaders(letters);
@@ -48,6 +50,7 @@ public class ChessBoardUI extends EscapeSequences {
                 out.print(headers[i - 1]);
             }
         }
+        out.print(SET_BG_COLOR_BLACK);
         out.println();
     }
 
@@ -63,25 +66,55 @@ public class ChessBoardUI extends EscapeSequences {
                     if (i % 2 == 0){
                         if (j % 2 == 1) {
                             out.print(SET_BG_COLOR_WHITE);
-                            out.print(EMPTY);
+                            out.print(evaluatePiece(i,j));
                         } else {
-                            out.print(SET_BG_COLOR_BLACK);
-                            out.print(EMPTY);
+                            out.print(SET_BG_COLOR_GREEN);
+                            out.print(evaluatePiece(i,j));
                         }
                     } else {
                         if (j % 2 == 0) {
                             out.print(SET_BG_COLOR_WHITE);
-                            out.print(EMPTY);
+                            out.print(evaluatePiece(i,j));
                         } else {
-                            out.print(SET_BG_COLOR_BLACK);
-                            out.print(EMPTY);
+                            out.print(SET_BG_COLOR_GREEN);
+                            out.print(evaluatePiece(i,j));
                         }
                     }
 
                 }
             }
+            out.print(SET_BG_COLOR_BLACK);
             out.println();
         }
+    }
+
+    private String evaluatePiece(int x, int y){
+        ChessPiece piece = chessBoard.getPiece(new ChessPosition(x,y));
+        if (piece == null){
+            return EMPTY;
+        }
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE)
+        {
+            return switch (piece.getPieceType()){
+                case KING -> WHITE_KING;
+                case QUEEN -> WHITE_QUEEN;
+                case BISHOP -> WHITE_BISHOP;
+                case KNIGHT -> WHITE_KNIGHT;
+                case ROOK -> WHITE_ROOK;
+                case PAWN -> WHITE_PAWN;
+            };
+        } else {
+            return switch (piece.getPieceType()){
+                case KING -> BLACK_KING;
+                case QUEEN -> BLACK_QUEEN;
+                case BISHOP -> BLACK_BISHOP;
+                case KNIGHT -> BLACK_KNIGHT;
+                case ROOK -> BLACK_ROOK;
+                case PAWN -> BLACK_PAWN;
+            };
+        }
+
     }
 
 }
