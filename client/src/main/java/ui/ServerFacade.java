@@ -3,6 +3,7 @@ package ui;
 import exception.ResponseException;
 import model.UserData;
 import request_result.AuthTokenRequest;
+import request_result.LoginRequest;
 import request_result.UserResult;
 public class ServerFacade extends ClientCommunicator{
     private final String serverUrl;
@@ -14,11 +15,16 @@ public class ServerFacade extends ClientCommunicator{
         var path = "/user";
         return new ClientCommunicator(serverUrl).makeRequest("POST", path, user, UserResult.class);
     }
-
+    public UserResult login(LoginRequest user) throws ResponseException {
+        var path = "/session";
+        return new ClientCommunicator(serverUrl).makeRequest("POST", path, user, UserResult.class);
+    }
     public void logout(String authToken) throws ResponseException {
         var path = "/session";
         new ClientCommunicator(serverUrl).makeRequest("DELETE", path, new AuthTokenRequest(authToken), null);
     }
+
+
 
 //    public void deletePet(int id) throws ResponseException {
 //        var path = String.format("/pet/%s", id);

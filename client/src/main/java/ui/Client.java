@@ -2,6 +2,7 @@ package ui;
 
 import exception.ResponseException;
 import model.UserData;
+import request_result.LoginRequest;
 import request_result.UserResult;
 
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public class Client {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
-//                case "rescue" -> rescuePet(params);
+                case "login" -> login(params);
                 case "logout" -> logout(params);
 //                case "signout" -> signOut();
 //                case "adopt" -> adoptPet(params);
@@ -65,8 +66,19 @@ public class Client {
             UserResult result = server.register(new UserData(params[0],params[1], params[2]));
             return String.format("You signed in as %s. Here is your authToken: %s\n", result.username(), result.authToken());
         }
-        throw new ResponseException(400, "Expected: <yourname>");
+        throw new ResponseException(400, "Expected: <username> <password> <email>\n");
     }
+
+    public String login(String... params) throws ResponseException {
+        if (params.length == 2) {
+            state = State.SIGNEDIN;
+            visitorName = params[0];
+            UserResult result = server.login(new LoginRequest(params[0], params[1]));
+            return String.format("Successfully logged in. Welcome %s. Here is your authToken: %s\n", result.username(), result.authToken());
+        }
+        throw new ResponseException(400, "Expected: <authToken>\n");
+    }
+
     public String logout(String... params) throws ResponseException {
         if (params.length == 1) {
             state = State.SIGNEDOUT;
@@ -75,6 +87,6 @@ public class Client {
             server.logout(authToken);
             return "Successfully logged out\n";
         }
-        throw new ResponseException(400, "Expected: <yourname>");
+        throw new ResponseException(400, "Expected: <authToken>\n");
     }
 }
