@@ -2,9 +2,8 @@ package ui;
 
 import exception.ResponseException;
 import model.UserData;
-import request_result.AuthTokenRequest;
-import request_result.LoginRequest;
-import request_result.UserResult;
+import request_result.*;
+
 public class ServerFacade extends ClientCommunicator{
     private final String serverUrl;
     public ServerFacade(String url) {
@@ -13,18 +12,21 @@ public class ServerFacade extends ClientCommunicator{
 
     public UserResult register(UserData user) throws ResponseException {
         var path = "/user";
-        return new ClientCommunicator(serverUrl).makeRequest("POST", path, user, UserResult.class);
+        return new ClientCommunicator(serverUrl).makeRequest("POST", path, null, user, UserResult.class);
     }
     public UserResult login(LoginRequest user) throws ResponseException {
         var path = "/session";
-        return new ClientCommunicator(serverUrl).makeRequest("POST", path, user, UserResult.class);
+        return new ClientCommunicator(serverUrl).makeRequest("POST", path, null, user, UserResult.class);
     }
     public void logout(String authToken) throws ResponseException {
         var path = "/session";
-        new ClientCommunicator(serverUrl).makeRequest("DELETE", path, new AuthTokenRequest(authToken), null);
+        new ClientCommunicator(serverUrl).makeRequest("DELETE", path, authToken, new AuthTokenRequest(authToken), null);
     }
 
-
+    public CreateGameResult create(CreateGameRequest gameRequest, String authToken) throws ResponseException {
+        var path = "/game";
+        return new ClientCommunicator(serverUrl).makeRequest("POST", path, authToken, gameRequest, CreateGameResult.class);
+    }
 
 //    public void deletePet(int id) throws ResponseException {
 //        var path = String.format("/pet/%s", id);

@@ -3,6 +3,7 @@ package ui;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import request_result.AuthTokenRequest;
+import request_result.CreateGameRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,15 +23,15 @@ public class ClientCommunicator {
     public ClientCommunicator() {
     }
 
-    public <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    public <T> T makeRequest(String method, String path, String authToken, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            if (request instanceof AuthTokenRequest) {
-                http.setRequestProperty("Authorization", ((AuthTokenRequest) request).authToken());
+            if (request instanceof AuthTokenRequest || request instanceof CreateGameRequest) {
+                http.setRequestProperty("Authorization", authToken);
             }
 
             writeBody(request, http);
