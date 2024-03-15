@@ -1,6 +1,7 @@
 package service;
 
 import dataAccess.*;
+import exception.DataAccessException;
 import model.UserData;
 import request_result.FailureRepsonse;
 import request_result.UserResult;

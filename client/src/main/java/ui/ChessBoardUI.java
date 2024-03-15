@@ -22,6 +22,11 @@ public class ChessBoardUI extends EscapeSequences {
         out.print(ERASE_SCREEN);
         var chess = new ChessGame();
         chess.getBoard().resetBoard();
+        try {
+            chess.makeMove(new ChessMove(new ChessPosition(2,2), new ChessPosition(3,2), null));
+        } catch (InvalidMoveException e) {
+            throw new RuntimeException(e);
+        }
         ChessBoardUI test = new ChessBoardUI(chess);
         test.createBlackChessBoard();
         out.println();

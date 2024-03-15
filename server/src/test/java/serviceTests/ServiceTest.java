@@ -1,6 +1,7 @@
 package serviceTests;
 
 import dataAccess.*;
+import exception.DataAccessException;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import service.*;

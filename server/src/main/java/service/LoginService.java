@@ -1,14 +1,12 @@
 package service;
 
 import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
+import exception.DataAccessException;
 import dataAccess.UserDAO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import request_result.FailureRepsonse;
 import request_result.LoginRequest;
 import request_result.UserResult;
-
-import java.util.Objects;
 
 public class LoginService {
     public Object login(UserDAO userDAO, LoginRequest loginData, AuthDAO authDAO) throws DataAccessException {

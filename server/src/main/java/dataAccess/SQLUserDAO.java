@@ -1,5 +1,6 @@
 package dataAccess;
 
+import exception.DataAccessException;
 import model.UserData;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

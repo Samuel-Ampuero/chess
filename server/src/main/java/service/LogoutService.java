@@ -1,7 +1,7 @@
 package service;
 
 import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
+import exception.DataAccessException;
 import request_result.FailureRepsonse;
 import request_result.AuthTokenRequest;
 import request_result.SucessResult;

@@ -1,7 +1,4 @@
 import chess.*;
-import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
-import model.AuthData;
 import server.Server;
 
 public class Main {

@@ -1,6 +1,7 @@
 package dataAccess;
 
 import chess.ChessGame;
+import exception.DataAccessException;
 import model.GameData;
 
 import com.google.gson.Gson;
@@ -12,7 +13,7 @@ import static java.sql.Types.NULL;
 
 public class SQLGameDAO implements GameDAO{
 
-    public SQLGameDAO() throws DataAccessException{
+    public SQLGameDAO() throws DataAccessException {
         configureDatabase();
     }
     public int createGame(String gameName) throws DataAccessException {

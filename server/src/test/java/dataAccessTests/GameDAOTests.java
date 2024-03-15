@@ -3,6 +3,7 @@ package dataAccessTests;
 import chess.ChessBoard;
 import chess.ChessGame;
 import dataAccess.*;
+import exception.DataAccessException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

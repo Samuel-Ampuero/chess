@@ -1,6 +1,7 @@
 package service;
 
 import dataAccess.*;
+import exception.DataAccessException;
 import request_result.SucessResult;
 
 public class ClearService {

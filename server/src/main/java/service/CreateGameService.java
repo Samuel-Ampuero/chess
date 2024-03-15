@@ -1,7 +1,7 @@
 package service;
 
 import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
+import exception.DataAccessException;
 import dataAccess.GameDAO;
 import request_result.*;
 

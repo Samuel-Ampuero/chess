@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import exception.DataAccessException;
 import model.UserData;
 import request_result.*;
 import spark.*;
