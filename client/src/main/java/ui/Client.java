@@ -2,6 +2,7 @@ package ui;
 
 import exception.ResponseException;
 import model.UserData;
+import request_result.UserResult;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -46,7 +47,7 @@ public class Client {
             return switch (cmd) {
                 case "register" -> register(params);
 //                case "rescue" -> rescuePet(params);
-//                case "list" -> listPets();
+                case "logout" -> logout(params);
 //                case "signout" -> signOut();
 //                case "adopt" -> adoptPet(params);
 //                case "adoptall" -> adoptAllPets();
@@ -61,8 +62,18 @@ public class Client {
         if (params.length >= 1) {
             state = State.SIGNEDIN;
             visitorName = params[0];
-            server.register(new UserData(params[0],params[1], params[2]));
-            return String.format("You signed in as %s.", visitorName);
+            UserResult result = server.register(new UserData(params[0],params[1], params[2]));
+            return String.format("You signed in as %s. Here is your authToken: %s\n", result.username(), result.authToken());
+        }
+        throw new ResponseException(400, "Expected: <yourname>");
+    }
+    public String logout(String... params) throws ResponseException {
+        if (params.length == 1) {
+            state = State.SIGNEDOUT;
+            String authToken = params[0];
+            visitorName = "";
+            server.logout(authToken);
+            return "Successfully logged out\n";
         }
         throw new ResponseException(400, "Expected: <yourname>");
     }

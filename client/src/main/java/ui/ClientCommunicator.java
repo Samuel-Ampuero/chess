@@ -2,6 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import request_result.AuthTokenRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,10 @@ public class ClientCommunicator {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (request instanceof AuthTokenRequest) {
+                http.setRequestProperty("Authorization", ((AuthTokenRequest) request).authToken());
+            }
 
             writeBody(request, http);
             http.connect();
