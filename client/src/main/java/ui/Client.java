@@ -102,11 +102,16 @@ public class Client extends EscapeSequences{
             return "Already signed in. If you wish to login as a different user, please logout first.\n";
         }
         if (params.length == 2) {
-            state = State.SIGNEDIN;
-            visitorName = params[0];
-            UserResult result = server.login(new LoginRequest(params[0], params[1]));
-            authToken = result.authToken();
-            return String.format("Successfully logged in. Welcome %s.\n", result.username());
+            try {
+                UserResult result = server.login(new LoginRequest(params[0], params[1]));
+                authToken = result.authToken();
+                state = State.SIGNEDIN;
+                visitorName = params[0];
+                return String.format("Successfully logged in. Welcome %s.\n", result.username());
+            } catch (ResponseException e) {
+                return e.getMessage();
+            }
+
         }
         throw new ResponseException(400, "Expected: <username> <password>\n");
     }
@@ -173,6 +178,10 @@ public class Client extends EscapeSequences{
 
     public String clear() throws ResponseException {
         server.clear();
+        visitorName = null;
+        state = State.SIGNEDOUT;
+        authToken = null;
+        gameList.clear();
         return "Cleared.\n";
     }
 
