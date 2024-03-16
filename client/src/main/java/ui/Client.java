@@ -75,7 +75,7 @@ public class Client extends EscapeSequences{
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
-                case "delete all data" -> clear();
+                case "delete_all_data" -> clear();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -173,7 +173,7 @@ public class Client extends EscapeSequences{
 
     public String clear() throws ResponseException {
         server.clear();
-        return "Cleared.";
+        return "Cleared.\n";
     }
 
     public String help() {
