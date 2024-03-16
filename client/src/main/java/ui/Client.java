@@ -5,10 +5,13 @@ import model.GameData;
 import model.UserData;
 import request_result.*;
 
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
-public class Client {
+public class Client extends EscapeSequences{
     private String visitorName = null;
     private final ServerFacade server;
     private State state = State.SIGNEDOUT;
@@ -19,17 +22,27 @@ public class Client {
         server = new ServerFacade(url);
     }
     public void run() {
-        System.out.println("♕ Welcome to 240 chess. ♕");
+        System.out.println(SET_TEXT_BOLD + "♕ Welcome to 240 chess. Type Help to get started. ♕" + "\u001b[0m");
 
         Scanner scanner = new Scanner(System.in);
-        var result = "";
+        var input = "";
 
-        while (!result.equals("quit")) {
+        while (!input.equals("quit")) {
+            if (state == State.SIGNEDOUT) {
+                System.out.print("\n[LOGGED_OUT] >>> ");
+            } else {
+                System.out.print("\n[LOGGED_IN] >>> ");
+            }
 
             String line = scanner.nextLine();
 
             try {
-                System.out.print(eval(line));
+                String result = eval(line);
+                if (Objects.equals(result, "quit")) {
+                    System.out.println("Thanks for playing. Goodbye.\n");
+                    return;
+                }
+                System.out.print(result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -42,9 +55,10 @@ public class Client {
         SIGNEDOUT,
         SIGNEDIN
     }
+
     private void assertSignedIn() throws ResponseException {
         if (state == State.SIGNEDOUT) {
-            throw new ResponseException(400, "You must sign in");
+            throw new ResponseException(400, "You must sign in\n");
         }
     }
 
@@ -61,8 +75,8 @@ public class Client {
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
-//                case "quit" -> "quit";
-                default -> "need to fix";//help();
+                case "quit" -> "quit";
+                default -> help();
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -101,8 +115,8 @@ public class Client {
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();
         if (params.length == 1) {
-            CreateGameResult result = server.create(new CreateGameRequest(params[0]), authToken);
-            return String.format("Successfully create a ChessGame. Here is the gameID: %s\n", result.gameID());
+            server.create(new CreateGameRequest(params[0]), authToken);
+            return "Successfully create a ChessGame.\n";
         }
         throw new ResponseException(400, "Expected: <gameName>\n");
     }
@@ -148,5 +162,40 @@ public class Client {
             return "";
         }
         throw new ResponseException(400, "Expected: <gameID>\n");
+    }
+
+    public String help() {
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        if (state == State.SIGNEDOUT) {
+            out.println(SET_TEXT_COLOR_BLUE + "  register <USERNAME> <PASSWORD> <EMAIL>" + "\u001b[0m" + " - to create an account");
+            out.println(SET_TEXT_COLOR_BLUE + "  login <USERNAME> <PASSWORD>" + "\u001b[0m" + " - to play chess");
+            out.println(SET_TEXT_COLOR_BLUE + "  quit" + "\u001b[0m" + " - playing chess");
+            out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
+            return "";
+//            return """
+//                      register <USERNAME> <PASSWORD> <EMAIL> - to create an account
+//                      login <USERNAME> <PASSWORD> - to play chess
+//                      quit - playing chess
+//                      help - with possible commands
+//                    """;
+        }
+        out.println(SET_TEXT_COLOR_BLUE + "  create <NAME>" + "\u001b[0m" + " - a game");
+        out.println(SET_TEXT_COLOR_BLUE + "  list" + "\u001b[0m" + " - games");
+        out.println(SET_TEXT_COLOR_BLUE + "  join <ID> [WHITE|BLACK|<empty>]" + "\u001b[0m" + " - a game");
+        out.println(SET_TEXT_COLOR_BLUE + "  observe <ID>" + "\u001b[0m" + " - a game");
+        out.println(SET_TEXT_COLOR_BLUE + "  logout" + "\u001b[0m" + " - when you are done");
+        out.println(SET_TEXT_COLOR_BLUE + "  quit" + "\u001b[0m" + " - playing chess");
+        out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
+
+        return "";
+//        return """
+//                  create <NAME> - a game
+//                  list - games
+//                  join <ID> [WHITE|BLACK|<empty>] - a game
+//                  observe <ID> - a game
+//                  logout - when you are done
+//                  quit - playing chess
+//                  help - with possible commands
+//                """;
     }
 }

@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
 public class ChessBoardUI extends EscapeSequences {
-    private PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);;
+    private PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     private ChessGame chessGame;
     private ChessBoard chessBoard;
 
