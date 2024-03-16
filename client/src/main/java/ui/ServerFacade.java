@@ -39,4 +39,9 @@ public class ServerFacade extends ClientCommunicator{
         return new ClientCommunicator(serverUrl).makeRequest("PUT", path, authToken, request, GameData.class);
     }
 
+    public String clear() throws ResponseException {
+        var path = "/db";
+        new ClientCommunicator(serverUrl).makeRequest("DELETE", path, null, null, null);
+        return "";
+    }
 }
