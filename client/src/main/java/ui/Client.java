@@ -6,12 +6,14 @@ import model.UserData;
 import request_result.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 public class Client {
     private String visitorName = null;
     private final ServerFacade server;
     private State state = State.SIGNEDOUT;
     private String authToken;
+    private HashMap<Integer, GameResult> gameList = new HashMap<>();
 
     public Client(String url) {
         server = new ServerFacade(url);
@@ -112,7 +114,8 @@ public class Client {
         int i = 1;
         for (GameResult game : result.games()){
             out += i + ": ";// + game.toString() + "\n";
-            out += String.format("gameName = %s, whiteUsername = %s, blackUsername = %s, gameID = %s\n", game.gameName(),game.whiteUsername(),game.blackUsername(),game.gameID());
+            out += String.format("gameName = %s, whiteUsername = %s, blackUsername = %s\n", game.gameName(),game.whiteUsername(),game.blackUsername());
+            gameList.put(i , game);
             i++;
         }
         return out;
@@ -121,7 +124,7 @@ public class Client {
     public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
         if (params.length == 2) {
-            GameData game = server.join(new JoinGameRequest(params[1].toUpperCase(), Integer.parseInt(params[0])), authToken);
+            GameData game = server.join(new JoinGameRequest(params[1].toUpperCase(), gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
             System.out.printf("Successfully joined game #%s\n", params[0]);
             new ChessBoardUI(game.game()).printBoards();
             return "";
