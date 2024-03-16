@@ -22,7 +22,8 @@ public class JoinGameService {
             }
 
             if(request.playerColor() == null){
-                return new SucessResult(null);
+//                return new SucessResult(null);
+                return gameDAO.getGame(request.gameID());
             }
 
             GameData originalGame = gameDAO.getGame(request.gameID());
@@ -31,7 +32,6 @@ public class JoinGameService {
             } else if (request.playerColor().equals("BLACK")){
                 gameDAO.updateGame(originalGame.gameID(), originalGame.whiteUsername(), authDAO.getAuth(authData.authToken()).username(), originalGame.gameName(), originalGame.game());
             }
-            //return new SucessResult(null); FIXME:: TESTING
             return gameDAO.getGame(request.gameID());
         } catch (DataAccessException err) {
             return new UserResult("Error", "error");

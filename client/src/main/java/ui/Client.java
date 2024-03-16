@@ -60,6 +60,7 @@ public class Client {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
+                case "observe" -> observeGame(params);
 //                case "quit" -> "quit";
                 default -> "need to fix";//help();
             };
@@ -124,11 +125,28 @@ public class Client {
     public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
         if (params.length == 2) {
+            if (!gameList.containsKey(Integer.parseInt(params[0]))){
+                throw new ResponseException(400, "Game does not exist\n");
+            }
             GameData game = server.join(new JoinGameRequest(params[1].toUpperCase(), gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
             System.out.printf("Successfully joined game #%s\n", params[0]);
             new ChessBoardUI(game.game()).printBoards();
             return "";
         }
         throw new ResponseException(400, "Expected: <gameID> [WHITE|BLACK|<empty>]\n");
+    }
+
+    public String observeGame(String... params) throws ResponseException {
+        assertSignedIn();
+        if (params.length == 1) {
+            if (!gameList.containsKey(Integer.parseInt(params[0]))){
+                throw new ResponseException(400, "Game does not exist\n");
+            }
+            GameData game = server.join(new JoinGameRequest(null, gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
+            System.out.printf("Observing game #%s\n", params[0]);
+            new ChessBoardUI(game.game()).printBoards();
+            return "";
+        }
+        throw new ResponseException(400, "Expected: <gameID>\n");
     }
 }
