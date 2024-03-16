@@ -1,11 +1,9 @@
 package ui;
 
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
-import request_result.CreateGameRequest;
-import request_result.CreateGameResult;
-import request_result.LoginRequest;
-import request_result.UserResult;
+import request_result.*;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -56,10 +54,10 @@ public class Client {
             return switch (cmd) {
                 case "register" -> register(params);
                 case "login" -> login(params);
-                case "logout" -> logout(params);
+                case "logout" -> logout();
                 case "create" -> createGame(params);
-//                case "adopt" -> adoptPet(params);
-//                case "adoptall" -> adoptAllPets();
+                case "list" -> listGames();
+                case "join" -> joinGame(params);
 //                case "quit" -> "quit";
                 default -> "need to fix";//help();
             };
@@ -89,15 +87,12 @@ public class Client {
         throw new ResponseException(400, "Expected: <username> <password>\n");
     }
 
-    public String logout(String... params) throws ResponseException {
-        if (params.length == 0) {
-            state = State.SIGNEDOUT;
-            visitorName = "";
-            server.logout(authToken);
-            authToken = "";
-            return "Successfully logged out\n";
-        }
-        throw new ResponseException(400, "Expected: <>\n");
+    public String logout() throws ResponseException {
+        state = State.SIGNEDOUT;
+        visitorName = "";
+        server.logout(authToken);
+        authToken = "";
+        return "Successfully logged out\n";
     }
 
     public String createGame(String... params) throws ResponseException {
@@ -109,4 +104,28 @@ public class Client {
         throw new ResponseException(400, "Expected: <gameName>\n");
     }
 
+    public String listGames() throws ResponseException {
+        assertSignedIn();
+        GameListResult result = server.list(authToken);
+
+        String out = "Here is the list of games:\n";
+        int i = 1;
+        for (GameResult game : result.games()){
+            out += i + ": ";// + game.toString() + "\n";
+            out += String.format("gameName = %s, whiteUsername = %s, blackUsername = %s, gameID = %s\n", game.gameName(),game.whiteUsername(),game.blackUsername(),game.gameID());
+            i++;
+        }
+        return out;
+    }
+
+    public String joinGame(String... params) throws ResponseException {
+        assertSignedIn();
+        if (params.length == 2) {
+            GameData game = server.join(new JoinGameRequest(params[1].toUpperCase(), Integer.parseInt(params[0])), authToken);
+            System.out.printf("Successfully joined game #%s\n", params[0]);
+            new ChessBoardUI(game.game()).printBoards();
+            return "";
+        }
+        throw new ResponseException(400, "Expected: <gameID> [WHITE|BLACK|<empty>]\n");
+    }
 }

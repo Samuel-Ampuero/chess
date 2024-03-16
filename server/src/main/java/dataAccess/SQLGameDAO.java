@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exception.DataAccessException;
 import model.GameData;
@@ -18,7 +19,11 @@ public class SQLGameDAO implements GameDAO{
     }
     public int createGame(String gameName) throws DataAccessException {
         var statement = "INSERT INTO gameDatabase (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
-        var game = new Gson().toJson(new ChessGame());
+        ChessGame chessGame = new ChessGame();
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        chessGame.setBoard(board);
+        var game = new Gson().toJson(chessGame);
         return executeUpdate(statement, null, null, gameName, game);
     }
 

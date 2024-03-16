@@ -4,7 +4,6 @@ import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 public class ChessBoardUI extends EscapeSequences {
     private PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);;
@@ -16,21 +15,14 @@ public class ChessBoardUI extends EscapeSequences {
         chessBoard = game.getBoard();
     }
 
-    public static void main(String[] args) {
+    public void printBoards() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
-        out.print(ERASE_SCREEN);
-        var chess = new ChessGame();
-        chess.getBoard().resetBoard();
-        try {
-            chess.makeMove(new ChessMove(new ChessPosition(2,2), new ChessPosition(3,2), null));
-        } catch (InvalidMoveException e) {
-            throw new RuntimeException(e);
-        }
-        ChessBoardUI test = new ChessBoardUI(chess);
+        ChessBoardUI test = new ChessBoardUI(chessGame);
         test.createBlackChessBoard();
         out.println();
         test.createWhiteChessBoard();
+        out.print("\u001b[0m");
     }
 
     public void createWhiteChessBoard(){

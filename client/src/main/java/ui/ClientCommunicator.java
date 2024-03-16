@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Objects;
 
 public class ClientCommunicator {
     private String serverUrl;
@@ -30,7 +31,7 @@ public class ClientCommunicator {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            if (request instanceof AuthTokenRequest || request instanceof CreateGameRequest) {
+            if (request instanceof AuthTokenRequest || request instanceof CreateGameRequest || ((Objects.equals(method, "GET") || Objects.equals(method, "PUT")) && Objects.equals(path, "/game"))) {
                 http.setRequestProperty("Authorization", authToken);
             }
 

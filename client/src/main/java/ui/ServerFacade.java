@@ -1,6 +1,7 @@
 package ui;
 
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 import request_result.*;
 
@@ -26,6 +27,16 @@ public class ServerFacade extends ClientCommunicator{
     public CreateGameResult create(CreateGameRequest gameRequest, String authToken) throws ResponseException {
         var path = "/game";
         return new ClientCommunicator(serverUrl).makeRequest("POST", path, authToken, gameRequest, CreateGameResult.class);
+    }
+
+    public GameListResult list(String authToken) throws ResponseException {
+        var path = "/game";
+        return new ClientCommunicator(serverUrl).makeRequest("GET", path, authToken, null, GameListResult.class);
+    }
+
+    public GameData join(JoinGameRequest request, String authToken) throws ResponseException {
+        var path = "/game";
+        return new ClientCommunicator(serverUrl).makeRequest("PUT", path, authToken, request, GameData.class);
     }
 
 //    public void deletePet(int id) throws ResponseException {
