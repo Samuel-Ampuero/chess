@@ -58,7 +58,7 @@ public class Client extends EscapeSequences{
 
     private void assertSignedIn() throws ResponseException {
         if (state == State.SIGNEDOUT) {
-            throw new ResponseException(400, "You must sign in\n");
+            throw new ResponseException(400, "You must login\n");
         }
     }
 
@@ -83,17 +83,23 @@ public class Client extends EscapeSequences{
         }
     }
     public String register(String... params) throws ResponseException {
+        if (state == State.SIGNEDIN) {
+            return "If you would like to register a new user, please logout first.\n";
+        }
         if (params.length == 3) {
             state = State.SIGNEDIN;
             visitorName = params[0];
             UserResult result = server.register(new UserData(params[0],params[1], params[2]));
             authToken = result.authToken();
-            return String.format("You signed in as %s.\n", result.username());
+            return String.format("You are logged in as %s.\n", result.username());
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>\n");
     }
 
     public String login(String... params) throws ResponseException {
+        if (state == State.SIGNEDIN) {
+            return "Already signed in. If you wish to login as a different user, please logout first.\n";
+        }
         if (params.length == 2) {
             state = State.SIGNEDIN;
             visitorName = params[0];
@@ -172,12 +178,6 @@ public class Client extends EscapeSequences{
             out.println(SET_TEXT_COLOR_BLUE + "  quit" + "\u001b[0m" + " - playing chess");
             out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
             return "";
-//            return """
-//                      register <USERNAME> <PASSWORD> <EMAIL> - to create an account
-//                      login <USERNAME> <PASSWORD> - to play chess
-//                      quit - playing chess
-//                      help - with possible commands
-//                    """;
         }
         out.println(SET_TEXT_COLOR_BLUE + "  create <NAME>" + "\u001b[0m" + " - a game");
         out.println(SET_TEXT_COLOR_BLUE + "  list" + "\u001b[0m" + " - games");
@@ -186,16 +186,6 @@ public class Client extends EscapeSequences{
         out.println(SET_TEXT_COLOR_BLUE + "  logout" + "\u001b[0m" + " - when you are done");
         out.println(SET_TEXT_COLOR_BLUE + "  quit" + "\u001b[0m" + " - playing chess");
         out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
-
         return "";
-//        return """
-//                  create <NAME> - a game
-//                  list - games
-//                  join <ID> [WHITE|BLACK|<empty>] - a game
-//                  observe <ID> - a game
-//                  logout - when you are done
-//                  quit - playing chess
-//                  help - with possible commands
-//                """;
     }
 }
