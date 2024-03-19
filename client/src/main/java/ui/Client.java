@@ -92,7 +92,7 @@ public class Client extends EscapeSequences{
             visitorName = params[0];
             UserResult result = server.register(new UserData(params[0],params[1], params[2]));
             authToken = result.authToken();
-            return String.format("You are logged in as %s.\n", result.username());
+            return String.format("You are logged in as %s. Please type Help for commands.\n", result.username());
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>\n");
     }
@@ -107,7 +107,7 @@ public class Client extends EscapeSequences{
                 authToken = result.authToken();
                 state = State.SIGNEDIN;
                 visitorName = params[0];
-                return String.format("Successfully logged in. Welcome %s.\n", result.username());
+                return String.format("Successfully logged in. Welcome %s. Please type Help for commands.\n", result.username());
             } catch (ResponseException e) {
                 return e.getMessage();
             }
