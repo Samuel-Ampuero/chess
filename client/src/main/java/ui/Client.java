@@ -1,9 +1,11 @@
 package ui;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 import request_result.*;
+import websocket.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -15,10 +17,15 @@ public class Client extends EscapeSequences{
     private String visitorName = null;
     private final ServerFacade server;
     private State state = State.SIGNEDOUT;
+    private boolean connected = false;
     private String authToken;
     private HashMap<Integer, GameResult> gameList = new HashMap<>();
+    private NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
+    private String url;
 
     public Client(String url) {
+        this.url = url;
         server = new ServerFacade(url);
     }
     public void run() {
@@ -75,6 +82,7 @@ public class Client extends EscapeSequences{
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
+                //case "join_player" -> joinPlayer(params);
                 case "delete_all_data" -> clear();
                 case "quit" -> "quit";
                 default -> help();
@@ -92,7 +100,7 @@ public class Client extends EscapeSequences{
             visitorName = params[0];
             UserResult result = server.register(new UserData(params[0],params[1], params[2]));
             authToken = result.authToken();
-            return String.format("You are logged in as %s. Please type Help for commands.\n", result.username());
+            return String.format("You are logged in as %s. Please type Help for commands.\n", visitorName);
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>\n");
     }
@@ -107,7 +115,7 @@ public class Client extends EscapeSequences{
                 authToken = result.authToken();
                 state = State.SIGNEDIN;
                 visitorName = params[0];
-                return String.format("Successfully logged in. Welcome %s. Please type Help for commands.\n", result.username());
+                return String.format("Successfully logged in. Welcome %s. Please type Help for commands. \n", visitorName);
             } catch (ResponseException e) {
                 return e.getMessage();
             }
@@ -155,11 +163,21 @@ public class Client extends EscapeSequences{
                 throw new ResponseException(400, "Game does not exist\n");
             }
             GameData game = server.join(new JoinGameRequest(params[1].toUpperCase(), gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
-            System.out.printf("Successfully joined game #%s\n", params[0]);
+            ws = new WebSocketFacade(url, notificationHandler);
+
+            if (params[1].equalsIgnoreCase("WHITE")) {
+                ws.joinPlayer(authToken, Integer.parseInt(params[0]), ChessGame.TeamColor.WHITE);
+            } else {
+                ws.joinPlayer(authToken, Integer.parseInt(params[0]), ChessGame.TeamColor.BLACK);
+            }
+
             new ChessBoardUI(game.game()).printBoards();
+            System.out.printf("Successfully joined game #%s\n", params[0]);
+            connected = true;
+
             return "";
         }
-        throw new ResponseException(400, "Expected: <gameID> [WHITE|BLACK|<empty>]\n");
+        throw new ResponseException(400, "Expected: <gameID> [WHITE|BLACK]\n");
     }
 
     public String observeGame(String... params) throws ResponseException {
@@ -171,10 +189,32 @@ public class Client extends EscapeSequences{
             GameData game = server.join(new JoinGameRequest(null, gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
             System.out.printf("Observing game #%s\n", params[0]);
             new ChessBoardUI(game.game()).printBoards();
+            connected = true;
             return "";
         }
         throw new ResponseException(400, "Expected: <gameID>\n");
     }
+
+//    public String joinPlayer(String... params) throws ResponseException {
+//        assertSignedIn();
+//        if (params.length == 2) {
+//            if (!gameList.containsKey(Integer.parseInt(params[0]))){
+//                throw new ResponseException(400, "Game does not exist\n");
+//            }
+//            if ((Objects.equals(params[1], "white") && !Objects.equals(gameList.get(Integer.parseInt(params[0])).whiteUsername(), visitorName)) ||
+//                    (Objects.equals(params[1], "black") && !Objects.equals(gameList.get(Integer.parseInt(params[0])).blackUsername(), visitorName))) {
+//                throw new ResponseException(400, String.format("You are not that color player in Game #%s\n", params[0]));
+//            }
+//            connected = true;
+//
+////            GameData game = gameList.get(Integer.parseInt(params[0]));
+////            System.out.printf("Successfully joined game #%s\n", params[0]);
+////            new ChessBoardUI(game.game()).printBoards();
+//            return "";
+//        }
+//        //FIXME
+//        throw new ResponseException(400, "Expected: <gameID> [WHITE|BLACK|<empty>]\n");
+//    }
 
     public String clear() throws ResponseException {
         server.clear();
@@ -193,10 +233,17 @@ public class Client extends EscapeSequences{
             out.println(SET_TEXT_COLOR_BLUE + "  quit" + "\u001b[0m" + " - playing chess");
             out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
             return "";
+        } else if (state == State.SIGNEDIN && connected) {
+            out.println(SET_TEXT_COLOR_BLUE + "  redraw" + "\u001b[0m" + " - chess board");
+            out.println(SET_TEXT_COLOR_BLUE + "  highlight <POSITION>" + "\u001b[0m" + " - legal moves of specified piece");
+            out.println(SET_TEXT_COLOR_BLUE + "  make <MOVE>" + "\u001b[0m" + " - on board e.g. b2b3");
+            out.println(SET_TEXT_COLOR_BLUE + "  resign" + "\u001b[0m" + " - the game");
+            out.println(SET_TEXT_COLOR_BLUE + "  leave" + "\u001b[0m" + " - the game");
+            out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
         }
         out.println(SET_TEXT_COLOR_BLUE + "  create <NAME>" + "\u001b[0m" + " - a game");
         out.println(SET_TEXT_COLOR_BLUE + "  list" + "\u001b[0m" + " - games");
-        out.println(SET_TEXT_COLOR_BLUE + "  join <ID> [WHITE|BLACK|<empty>]" + "\u001b[0m" + " - a game");
+        out.println(SET_TEXT_COLOR_BLUE + "  join <ID> [WHITE|BLACK]" + "\u001b[0m" + " - a game");
         out.println(SET_TEXT_COLOR_BLUE + "  observe <ID>" + "\u001b[0m" + " - a game");
         out.println(SET_TEXT_COLOR_BLUE + "  logout" + "\u001b[0m" + " - when you are done");
         out.println(SET_TEXT_COLOR_BLUE + "  quit" + "\u001b[0m" + " - playing chess");
