@@ -5,6 +5,10 @@ import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 import request_result.*;
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
 import websocket.*;
 
 import java.io.PrintStream;
@@ -13,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
-public class Client extends EscapeSequences{
+public class Client extends EscapeSequences implements NotificationHandler{
     private String visitorName = null;
     private final ServerFacade server;
     private State state = State.SIGNEDOUT;
@@ -249,5 +253,15 @@ public class Client extends EscapeSequences{
         out.println(SET_TEXT_COLOR_BLUE + "  quit" + "\u001b[0m" + " - playing chess");
         out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
         return "";
+    }
+
+    public void notify(ServerMessage notification) {
+        if (notification instanceof Notification) {
+            System.out.println(((Notification) notification).getMessage());
+        } else if (notification instanceof Error) {
+            System.out.println(((Error) notification).getErrorMessage());
+        } else if (notification instanceof LoadGame) {
+            System.out.println(((LoadGame) notification).getGame());
+        }
     }
 }

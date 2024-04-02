@@ -7,6 +7,7 @@ import request_result.*;
 import spark.*;
 import dataAccess.*;
 import service.*;
+import websocket.WebSocketHandler;
 
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ public class Server {
     private AuthDAO authMemory;
     private UserDAO userMemory;
     private GameDAO gameMemory;
+    private final WebSocketHandler webSocketHandler = new WebSocketHandler();
 
     private void createDAOs() {
         try {
@@ -30,6 +32,9 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/connect", webSocketHandler);
+
         Spark.post("/user", this::registerHandler);
         Spark.post("/session", this::loginHandler);
         Spark.delete("/session", this::logoutHandler);
