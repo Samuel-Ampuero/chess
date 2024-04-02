@@ -24,7 +24,6 @@ public class Client extends EscapeSequences implements NotificationHandler{
     private boolean connected = false;
     private String authToken;
     private HashMap<Integer, GameResult> gameList = new HashMap<>();
-    private NotificationHandler notificationHandler;
     private WebSocketFacade ws;
     private String url;
 
@@ -184,7 +183,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 throw new ResponseException(400, "Game does not exist\n");
             }
             GameData game = server.join(new JoinGameRequest(params[1].toUpperCase(), gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
-            ws = new WebSocketFacade(url, notificationHandler);
+            ws = new WebSocketFacade(url, this);
 
             if (params[1].equalsIgnoreCase("WHITE")) {
                 ws.joinPlayer(authToken, Integer.parseInt(params[0]), ChessGame.TeamColor.WHITE);

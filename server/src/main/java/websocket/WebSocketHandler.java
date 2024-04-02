@@ -29,6 +29,7 @@ public class WebSocketHandler {
 
     private void joinPlayer(String authToken, Session session) throws IOException {
         connections.add(authToken, session);
+        System.out.println("GOT HERE");
         //FIXME:: HOW TO GET NAME FROM DATABASE?
         var message = String.format("%s is in the shop", authToken);
         var notification = new Notification(message);
