@@ -39,11 +39,16 @@ public class Client extends EscapeSequences implements NotificationHandler{
         var input = "";
 
         while (!input.equals("quit")) {
-            if (state == State.SIGNEDOUT) {
-                System.out.print("\n[LOGGED_OUT] >>> ");
+            if (connected && state == State.SIGNEDIN) {
+                System.out.print("\n[Connected] >>> ");
             } else {
-                System.out.print("\n[LOGGED_IN] >>> ");
+                if (state == State.SIGNEDOUT) {
+                    System.out.print("\n[LOGGED_OUT] >>> ");
+                } else {
+                    System.out.print("\n[LOGGED_IN] >>> ");
+                }
             }
+
 
             String line = scanner.nextLine();
 
@@ -73,6 +78,12 @@ public class Client extends EscapeSequences implements NotificationHandler{
         }
     }
 
+    private void assertNotConnected() throws ResponseException {
+        if (connected) {
+            throw new ResponseException(400, "You must leave the current game first\n");
+        }
+    }
+
     private String eval(String input){
         try {
             var tokens = input.toLowerCase().split(" ");
@@ -99,6 +110,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
         if (state == State.SIGNEDIN) {
             return "If you would like to register a new user, please logout first.\n";
         }
+        assertNotConnected();
         if (params.length == 3) {
             state = State.SIGNEDIN;
             visitorName = params[0];
@@ -113,6 +125,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
         if (state == State.SIGNEDIN) {
             return "Already signed in. If you wish to login as a different user, please logout first.\n";
         }
+        assertNotConnected();
         if (params.length == 2) {
             try {
                 UserResult result = server.login(new LoginRequest(params[0], params[1]));
@@ -129,6 +142,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
     }
 
     public String logout() throws ResponseException {
+        assertNotConnected();
         state = State.SIGNEDOUT;
         visitorName = "";
         server.logout(authToken);
@@ -138,6 +152,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
 
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();
+        assertNotConnected();
         if (params.length == 1) {
             server.create(new CreateGameRequest(params[0]), authToken);
             return "Successfully create a ChessGame.\n";
@@ -147,6 +162,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
 
     public String listGames() throws ResponseException {
         assertSignedIn();
+        assertNotConnected();
         GameListResult result = server.list(authToken);
 
         String out = "Here is the list of games:\n";
@@ -162,6 +178,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
 
     public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
+        assertNotConnected();
         if (params.length == 2) {
             if (!gameList.containsKey(Integer.parseInt(params[0]))){
                 throw new ResponseException(400, "Game does not exist\n");
@@ -186,6 +203,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
 
     public String observeGame(String... params) throws ResponseException {
         assertSignedIn();
+        assertNotConnected();
         if (params.length == 1) {
             if (!gameList.containsKey(Integer.parseInt(params[0]))){
                 throw new ResponseException(400, "Game does not exist\n");
@@ -224,6 +242,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
         server.clear();
         visitorName = null;
         state = State.SIGNEDOUT;
+        connected = false;
         authToken = null;
         gameList.clear();
         return "Cleared.\n";
@@ -244,6 +263,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
             out.println(SET_TEXT_COLOR_BLUE + "  resign" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  leave" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
+            return "";
         }
         out.println(SET_TEXT_COLOR_BLUE + "  create <NAME>" + "\u001b[0m" + " - a game");
         out.println(SET_TEXT_COLOR_BLUE + "  list" + "\u001b[0m" + " - games");
