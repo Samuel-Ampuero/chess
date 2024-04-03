@@ -3,6 +3,9 @@ package websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
 
@@ -33,8 +36,14 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    //FIXME: Change servermessage type here
-                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+                    var notification = new ServerMessage();
+                    if(message.startsWith("{\"message")){
+                        notification = new Gson().fromJson(message, Notification.class);
+                    } else if (message.startsWith("{\"errorMessage")) {
+                        notification = new Gson().fromJson(message, Error.class);
+                    } else {
+                        notification = new Gson().fromJson(message, LoadGame.class);
+                    }
                     notificationHandler.notify(notification);
                 }
             });

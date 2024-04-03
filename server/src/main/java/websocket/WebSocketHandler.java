@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -34,6 +35,8 @@ public class WebSocketHandler {
         var message = String.format("%s is in the shop", authToken);
         var notification = new Notification(message);
         connections.broadcast(authToken, notification);
+        //FIXME:: NEED TO FIX "GAME"
+        session.getRemote().sendString(new LoadGame("test").toString());
     }
 
 //    private void exit(String authToken) throws IOException {
