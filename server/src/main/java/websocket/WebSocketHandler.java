@@ -8,8 +8,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 
@@ -34,26 +33,43 @@ public class WebSocketHandler {
         if (action.getCommandType() == UserGameCommand.CommandType.JOIN_PLAYER){
             action = new Gson().fromJson(message, JoinPlayer.class);
             joinPlayer((JoinPlayer) action, session);
+        } else if (action.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER){
+            action = new Gson().fromJson(message, JoinObserver.class);
+            joinObserver((JoinObserver) action, session);
+        } else if (action.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
+            action = new Gson().fromJson(message, MakeMove.class);
+            //FIXME:: IMPLEMENT
+        } else if (action.getCommandType() == UserGameCommand.CommandType.LEAVE){
+            action = new Gson().fromJson(message, Leave.class);
+            //FIXME:: IMPLEMENT
+        } else if (action.getCommandType() == UserGameCommand.CommandType.RESIGN){
+            action = new Gson().fromJson(message, Resign.class);
+            //FIXME:: IMPLEMENT
         }
-//        if (message.startsWith("{\"gameID")){
-//            action = new Gson().fromJson(message, JoinPlayer.class);
-//            joinPlayer((JoinPlayer) action, session);
-//        }
-//        switch (action.getCommandType()) {
-//            case JOIN_PLAYER -> joinPlayer(action.getAuthString(), session);
-////            case JOIN_OBSERVER -> exit(action.getAuthString());
-////            case MAKE_MOVE -> enter(action.getAuthString(), session);
-////            case LEAVE -> exit(action.getAuthString());
-////            case RESIGN -> exit(action.getAuthString());
-//        }
     }
 
     private void joinPlayer(JoinPlayer player, Session session) throws IOException {
         connections.add(player.getAuthString(), session);
-        System.out.println("GOT HERE");
         String message;
         try {
             message = String.format("%s has joined the game", authMemory.getAuth(player.getAuthString()).username());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        var notification = new Notification(message);
+        connections.broadcast(player.getAuthString(), notification);
+        try {
+            session.getRemote().sendString(new LoadGame(gameMemory.getGame(player.getGameID()).game()).toString());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void joinObserver(JoinObserver player, Session session) throws IOException {
+        connections.add(player.getAuthString(), session);
+        String message;
+        try {
+            message = String.format("%s is observing the game", authMemory.getAuth(player.getAuthString()).username());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

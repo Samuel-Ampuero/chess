@@ -194,7 +194,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), ChessGame.TeamColor.BLACK);
             }
 
-            System.out.printf("Successfully joined game #%s\nPlease type help for commands", params[0]);
+            System.out.printf("Successfully joined game #%s. Please type help for commands\n", params[0]);
             connected = true;
 
             return "";
@@ -205,14 +205,17 @@ public class Client extends EscapeSequences implements NotificationHandler{
     public String observeGame(String... params) throws ResponseException {
         assertSignedIn();
         assertNotConnected();
-        //FIXME:: MAKE SURE TO MAKE PLAYERCOLOR WHITE FOR PRINTING BOARD
         if (params.length == 1) {
             if (!gameList.containsKey(Integer.parseInt(params[0]))){
                 throw new ResponseException(400, "Game does not exist\n");
             }
+
             GameData game = server.join(new JoinGameRequest(null, gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
+            playerColor = ChessGame.TeamColor.WHITE;
+            ws = new WebSocketFacade(url, this);
+            ws.joinObserver(authToken, gameList.get(Integer.parseInt(params[0])).gameID());
+
             System.out.printf("Observing game #%s\n", params[0]);
-            new ChessBoardUI(game.game()).printBoards();
             connected = true;
             return "";
         }

@@ -7,6 +7,7 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
 
 import javax.websocket.*;
@@ -60,6 +61,14 @@ public class WebSocketFacade extends Endpoint {
     public void joinPlayer(String authToken, int gameID, ChessGame.TeamColor playerColor) throws ResponseException {
         try {
             var action = new JoinPlayer(gameID, playerColor, authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+    public void joinObserver(String authToken, int gameID) throws ResponseException {
+        try {
+            var action = new JoinObserver(gameID, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());

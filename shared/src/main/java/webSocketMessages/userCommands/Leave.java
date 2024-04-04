@@ -2,7 +2,7 @@ package webSocketMessages.userCommands;
 
 import com.google.gson.Gson;
 
-public class Leave {
+public class Leave extends UserGameCommand{
     int gameID;
     UserGameCommand gameCommand;
     public Leave(int gameID, String authToken){
