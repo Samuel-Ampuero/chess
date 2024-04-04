@@ -186,9 +186,9 @@ public class Client extends EscapeSequences implements NotificationHandler{
             ws = new WebSocketFacade(url, this);
 
             if (params[1].equalsIgnoreCase("WHITE")) {
-                ws.joinPlayer(authToken, Integer.parseInt(params[0]), ChessGame.TeamColor.WHITE);
+                ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), ChessGame.TeamColor.WHITE);
             } else {
-                ws.joinPlayer(authToken, Integer.parseInt(params[0]), ChessGame.TeamColor.BLACK);
+                ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), ChessGame.TeamColor.BLACK);
             }
 
             new ChessBoardUI(game.game()).printBoards();
@@ -215,27 +215,6 @@ public class Client extends EscapeSequences implements NotificationHandler{
         }
         throw new ResponseException(400, "Expected: <gameID>\n");
     }
-
-//    public String joinPlayer(String... params) throws ResponseException {
-//        assertSignedIn();
-//        if (params.length == 2) {
-//            if (!gameList.containsKey(Integer.parseInt(params[0]))){
-//                throw new ResponseException(400, "Game does not exist\n");
-//            }
-//            if ((Objects.equals(params[1], "white") && !Objects.equals(gameList.get(Integer.parseInt(params[0])).whiteUsername(), visitorName)) ||
-//                    (Objects.equals(params[1], "black") && !Objects.equals(gameList.get(Integer.parseInt(params[0])).blackUsername(), visitorName))) {
-//                throw new ResponseException(400, String.format("You are not that color player in Game #%s\n", params[0]));
-//            }
-//            connected = true;
-//
-////            GameData game = gameList.get(Integer.parseInt(params[0]));
-////            System.out.printf("Successfully joined game #%s\n", params[0]);
-////            new ChessBoardUI(game.game()).printBoards();
-//            return "";
-//        }
-//        //FIXME
-//        throw new ResponseException(400, "Expected: <gameID> [WHITE|BLACK|<empty>]\n");
-//    }
 
     public String clear() throws ResponseException {
         server.clear();

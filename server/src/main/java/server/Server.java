@@ -15,7 +15,7 @@ public class Server {
     private AuthDAO authMemory;
     private UserDAO userMemory;
     private GameDAO gameMemory;
-    private final WebSocketHandler webSocketHandler = new WebSocketHandler();
+    private WebSocketHandler webSocketHandler = null;
 
     private void createDAOs() {
         try {
@@ -30,6 +30,8 @@ public class Server {
     public int run(int desiredPort) {
         createDAOs();
         Spark.port(desiredPort);
+
+        webSocketHandler = new WebSocketHandler(authMemory,userMemory,gameMemory);
 
         Spark.staticFiles.location("web");
 
