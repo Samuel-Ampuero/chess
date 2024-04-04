@@ -23,6 +23,8 @@ public class Client extends EscapeSequences implements NotificationHandler{
     private State state = State.SIGNEDOUT;
     private boolean connected = false;
     private String authToken;
+
+    private ChessGame.TeamColor playerColor;
     private HashMap<Integer, GameResult> gameList = new HashMap<>();
     private WebSocketFacade ws;
     private String url;
@@ -38,14 +40,13 @@ public class Client extends EscapeSequences implements NotificationHandler{
         var input = "";
 
         while (!input.equals("quit")) {
-            if (connected && state == State.SIGNEDIN) {
-                System.out.print("\n[Connected] >>> ");
-            } else {
-                if (state == State.SIGNEDOUT) {
-                    System.out.print("\n[LOGGED_OUT] >>> ");
-                } else {
-                    System.out.print("\n[LOGGED_IN] >>> ");
-                }
+//            if (connected && state == State.SIGNEDIN) {
+//                System.out.print("\n[Connected] >>> ");
+//            } else {
+            if (state == State.SIGNEDOUT && !connected) {
+                System.out.print("\n[LOGGED_OUT] >>> ");
+            } else if (state == State.SIGNEDIN && !connected){
+                System.out.print("\n[LOGGED_IN] >>> ");
             }
 
 
@@ -186,13 +187,14 @@ public class Client extends EscapeSequences implements NotificationHandler{
             ws = new WebSocketFacade(url, this);
 
             if (params[1].equalsIgnoreCase("WHITE")) {
+                playerColor = ChessGame.TeamColor.WHITE;
                 ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), ChessGame.TeamColor.WHITE);
             } else {
+                playerColor = ChessGame.TeamColor.BLACK;
                 ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), ChessGame.TeamColor.BLACK);
             }
 
-            new ChessBoardUI(game.game()).printBoards();
-            System.out.printf("Successfully joined game #%s\n", params[0]);
+            System.out.printf("Successfully joined game #%s\nPlease type help for commands", params[0]);
             connected = true;
 
             return "";
@@ -203,6 +205,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
     public String observeGame(String... params) throws ResponseException {
         assertSignedIn();
         assertNotConnected();
+        //FIXME:: MAKE SURE TO MAKE PLAYERCOLOR WHITE FOR PRINTING BOARD
         if (params.length == 1) {
             if (!gameList.containsKey(Integer.parseInt(params[0]))){
                 throw new ResponseException(400, "Game does not exist\n");
@@ -259,7 +262,12 @@ public class Client extends EscapeSequences implements NotificationHandler{
         } else if (notification instanceof Error) {
             System.out.println(((Error) notification).getErrorMessage());
         } else if (notification instanceof LoadGame) {
-            System.out.println(((LoadGame) notification).getGame());
+            if (playerColor.equals(ChessGame.TeamColor.WHITE)){
+                new ChessBoardUI(((LoadGame) notification).getGame()).createWhiteChessBoard();
+            } else if (playerColor.equals(ChessGame.TeamColor.BLACK)){
+                new ChessBoardUI(((LoadGame) notification).getGame()).createBlackChessBoard();
+            }
+
         }
     }
 }

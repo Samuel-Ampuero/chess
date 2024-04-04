@@ -32,6 +32,7 @@ public class ChessBoardUI extends EscapeSequences {
         printHeaders(letters);
         printWhiteChessBoard();
         printHeaders(letters);
+        out.print("\u001b[0m");
     }
 
     public void createBlackChessBoard(){
@@ -41,6 +42,7 @@ public class ChessBoardUI extends EscapeSequences {
         printHeaders(letters);
         printBlackChessBoard();
         printHeaders(letters);
+        out.print("\u001b[0m");
     }
 
     public void printHeaders(String[] headers){

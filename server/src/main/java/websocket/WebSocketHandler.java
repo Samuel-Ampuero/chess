@@ -30,11 +30,15 @@ public class WebSocketHandler {
     }
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        UserGameCommand action = new UserGameCommand();
-        if (message.startsWith("{\"gameID")){
+        UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
+        if (action.getCommandType() == UserGameCommand.CommandType.JOIN_PLAYER){
             action = new Gson().fromJson(message, JoinPlayer.class);
             joinPlayer((JoinPlayer) action, session);
         }
+//        if (message.startsWith("{\"gameID")){
+//            action = new Gson().fromJson(message, JoinPlayer.class);
+//            joinPlayer((JoinPlayer) action, session);
+//        }
 //        switch (action.getCommandType()) {
 //            case JOIN_PLAYER -> joinPlayer(action.getAuthString(), session);
 ////            case JOIN_OBSERVER -> exit(action.getAuthString());
@@ -49,14 +53,17 @@ public class WebSocketHandler {
         System.out.println("GOT HERE");
         String message;
         try {
-            message = String.format("%s is in the shop", authMemory.getAuth(player.getAuthString()).username());
+            message = String.format("%s has joined the game", authMemory.getAuth(player.getAuthString()).username());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
         var notification = new Notification(message);
         connections.broadcast(player.getAuthString(), notification);
-        //FIXME:: NEED TO FIX "GAME"
-        session.getRemote().sendString(new LoadGame("test").toString());
+        try {
+            session.getRemote().sendString(new LoadGame(gameMemory.getGame(player.getGameID()).game()).toString());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 //    private void exit(String authToken) throws IOException {
