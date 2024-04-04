@@ -1,6 +1,7 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import webSocketMessages.serverMessages.Error;
@@ -9,6 +10,7 @@ import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.MakeMove;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -69,6 +71,15 @@ public class WebSocketFacade extends Endpoint {
     public void joinObserver(String authToken, int gameID) throws ResponseException {
         try {
             var action = new JoinObserver(gameID, authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove chessMove) throws ResponseException {
+        try {
+            var action = new MakeMove(gameID, chessMove, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());

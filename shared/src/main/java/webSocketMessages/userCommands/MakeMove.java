@@ -15,4 +15,8 @@ public class MakeMove extends UserGameCommand{
     public String toString() {
         return new Gson().toJson(this);
     }
+
+    public int getGameID(){return gameID;}
+
+    public ChessMove getMove(){return move;}
 }
