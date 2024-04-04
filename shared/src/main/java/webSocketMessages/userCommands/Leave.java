@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 
 public class Leave extends UserGameCommand{
     int gameID;
-    UserGameCommand gameCommand;
     public Leave(int gameID, String authToken){
+        super(authToken, CommandType.LEAVE);
         this.gameID = gameID;
-        gameCommand = new UserGameCommand(authToken, UserGameCommand.CommandType.LEAVE);
     }
 
     public String toString() {

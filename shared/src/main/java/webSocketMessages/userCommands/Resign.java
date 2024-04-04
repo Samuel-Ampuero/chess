@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 
 public class Resign extends UserGameCommand{
     int gameID;
-    UserGameCommand gameCommand;
     public Resign(int gameID, String authToken){
+        super(authToken, CommandType.JOIN_PLAYER);
         this.gameID = gameID;
-        gameCommand = new UserGameCommand(authToken, UserGameCommand.CommandType.RESIGN);
     }
 
     public String toString() {
