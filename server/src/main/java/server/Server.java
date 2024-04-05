@@ -31,7 +31,7 @@ public class Server {
         createDAOs();
         Spark.port(desiredPort);
 
-        webSocketHandler = new WebSocketHandler(authMemory,userMemory,gameMemory);
+        webSocketHandler = new WebSocketHandler(authMemory,gameMemory);
 
         Spark.staticFiles.location("web");
 

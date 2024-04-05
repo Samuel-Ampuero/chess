@@ -8,9 +8,7 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.MakeMove;
+import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -30,7 +28,7 @@ public class WebSocketFacade extends Endpoint {
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
-            
+
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
@@ -75,6 +73,24 @@ public class WebSocketFacade extends Endpoint {
     public void makeMove(String authToken, int gameID, ChessMove chessMove) throws ResponseException {
         try {
             var action = new MakeMove(gameID, chessMove, authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void resign(String authToken, int gameID) throws ResponseException {
+        try {
+            var action = new Resign(gameID, authToken);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void leave(String authToken, int gameID) throws ResponseException {
+        try {
+            var action = new Leave(gameID, authToken);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());

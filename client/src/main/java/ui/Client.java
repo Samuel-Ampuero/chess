@@ -25,6 +25,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
     private boolean connected = false;
     private boolean observing = false;
     private boolean checkMate = false;
+    boolean resigned;
     private String authToken;
     private ChessGame currentGameState;
     private ChessGame.TeamColor playerColor;
@@ -110,7 +111,19 @@ public class Client extends EscapeSequences implements NotificationHandler{
 
     private void assertNotObserving() throws ResponseException {
         if (observing) {
-            throw new ResponseException(400, "You are observing\n");
+            throw new ResponseException(400, "You cannot do that as an observer\n");
+        }
+    }
+
+    private void assertNotResigned() throws ResponseException {
+        if (resigned) {
+            throw new ResponseException(400, "Game was resigned. Command not allowed.\n");
+        }
+    }
+
+    private void assertNotCheckMate() throws ResponseException {
+        if (checkMate) {
+            throw new ResponseException(400, "You are in CheckMate, the only option left is to resign. Better luck next time!\n");
         }
     }
 
@@ -130,6 +143,8 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 case "redraw" -> redrawBoard();
                 case "highlight" -> highlightMoves(params);
                 case "move" -> makeMove(params);
+                case "resign" -> resign();
+                case "leave" -> leave();
                 case "delete_all_data" -> clear();
                 case "quit" -> "quit";
                 default -> help();
@@ -231,6 +246,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
             ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), playerColor);
 
             System.out.printf("Successfully joined game #%s. Please type help for commands\n", params[0]);
+            resigned = false;
             connected = true;
             joinedGameID = gameList.get(Integer.parseInt(params[0])).gameID();
             return "";
@@ -299,6 +315,8 @@ public class Client extends EscapeSequences implements NotificationHandler{
         assertSignedIn();
         assertConnected();
         assertNotObserving();
+        assertNotResigned();
+        assertNotCheckMate();
         if ((params.length == 1 || params.length == 2) && params[0].length() == 4
                 && Character.isLetter(params[0].charAt(0)) && Character.isLetter(params[0].charAt(2))
                 && Character.isDigit(params[0].charAt(1)) && Character.isDigit(params[0].charAt(3))) {
@@ -317,6 +335,33 @@ public class Client extends EscapeSequences implements NotificationHandler{
             return "";
         }
         throw new ResponseException(400, "Expected: <MOVE> [PROMOTION | <empty>] e.g. b2b1 or b2b1 \"queen\"\n");
+    }
+
+    public String resign() throws ResponseException {
+        assertSignedIn();
+        assertConnected();
+        assertNotObserving();
+
+        ws.resign(authToken,joinedGameID);
+        resigned = true;
+
+        return "";
+    }
+
+    public String leave() throws ResponseException {
+        assertSignedIn();
+        assertConnected();
+        ws.leave(authToken,joinedGameID);
+        connected = false;
+        observing = false;
+        checkMate = false;
+        resigned = false;
+        currentGameState = null;
+        playerColor = null;
+        joinedGameID = 0;
+
+        System.out.println("Successfully left the game. Please type help for commands");
+        return "";
     }
 
     public String clear() throws ResponseException {
@@ -364,6 +409,9 @@ public class Client extends EscapeSequences implements NotificationHandler{
     public void notify(ServerMessage notification) {
         if (notification instanceof Notification) {
             System.out.println(((Notification) notification).getMessage());
+            if (((Notification) notification).getMessage().endsWith("Game Over.\n")) {
+                resigned = true;
+            }
         } else if (notification instanceof Error) {
             System.out.println(SET_TEXT_COLOR_RED + ((Error) notification).getErrorMessage() + "\u001b[0m");
         } else if (notification instanceof LoadGame) {
@@ -374,18 +422,22 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 new ChessBoardUI(((LoadGame) notification).getGame()).createBlackChessBoard();
             }
 
-            if (currentGameState.isInCheck(ChessGame.TeamColor.WHITE)){
-                System.out.println("WHITE is in Check");
-            } else if (currentGameState.isInCheck(ChessGame.TeamColor.BLACK)){
-                System.out.println("BLACK is in Check");
-            } else if(currentGameState.isInCheckmate(ChessGame.TeamColor.WHITE)){
+            if(currentGameState.isInCheckmate(ChessGame.TeamColor.WHITE) && currentGameState.isInStalemate(ChessGame.TeamColor.WHITE)){
                 System.out.println("WHITE is in CheckMate\n");
-                checkMate = true;
-            } else if(currentGameState.isInCheckmate(ChessGame.TeamColor.BLACK)){
+                if (playerColor == ChessGame.TeamColor.WHITE) {
+                    checkMate = true;
+                }
+            } else if(currentGameState.isInCheckmate(ChessGame.TeamColor.BLACK) && currentGameState.isInStalemate(ChessGame.TeamColor.BLACK)){
                 System.out.println("BLACK is in CheckMate\n");
-                checkMate = true;
-            } else {
-                checkMate = false;
+                if (playerColor == ChessGame.TeamColor.BLACK) {
+                    checkMate = true;
+                }
+            } else{
+                if (currentGameState.isInCheck(ChessGame.TeamColor.WHITE)){
+                    System.out.println("WHITE is in Check");
+                } else if (currentGameState.isInCheck(ChessGame.TeamColor.BLACK)){
+                    System.out.println("BLACK is in Check");
+                }
             }
 
             System.out.printf("It is %s's turn\n", currentGameState.getTeamTurn().toString());
