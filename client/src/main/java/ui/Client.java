@@ -24,6 +24,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
     private State state = State.SIGNEDOUT;
     private boolean connected = false;
     private boolean observing = false;
+    private boolean checkMate = false;
     private String authToken;
     private ChessGame currentGameState;
     private ChessGame.TeamColor playerColor;
@@ -60,9 +61,6 @@ public class Client extends EscapeSequences implements NotificationHandler{
         var input = "";
 
         while (!input.equals("quit")) {
-//            if (connected && state == State.SIGNEDIN) {
-//                System.out.print("\n[Connected] >>> ");
-//            } else {
             if (state == State.SIGNEDOUT && !connected) {
                 System.out.print("\n[LOGGED_OUT] >>> ");
             } else if (state == State.SIGNEDIN && !connected){
@@ -131,7 +129,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 case "observe" -> observeGame(params);
                 case "redraw" -> redrawBoard();
                 case "highlight" -> highlightMoves(params);
-                case "make" -> makeMove(params);
+                case "move" -> makeMove(params);
                 case "delete_all_data" -> clear();
                 case "quit" -> "quit";
                 default -> help();
@@ -347,7 +345,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
         } else if (state == State.SIGNEDIN && connected) {
             out.println(SET_TEXT_COLOR_BLUE + "  redraw" + "\u001b[0m" + " - chess board");
             out.println(SET_TEXT_COLOR_BLUE + "  highlight <POSITION>" + "\u001b[0m" + " - legal moves of specified piece e.g. b2");
-            out.println(SET_TEXT_COLOR_BLUE + "  make <MOVE> [PROMOTION | <empty>]" + "\u001b[0m" + " - on board e.g. b2b1 or b2b1 \"queen\".\n\t\t\tAccepted promotions: \"queen\", \"bishop\", \"knight\", and \"rook\" without quotes");
+            out.println(SET_TEXT_COLOR_BLUE + "  move <POSITIONS> [PROMOTION | <empty>]" + "\u001b[0m" + " - on board e.g. b2b1 or b2b1 \"queen\".\n\t\t\tAccepted promotions: \"queen\", \"bishop\", \"knight\", and \"rook\" without quotes");
             out.println(SET_TEXT_COLOR_BLUE + "  resign" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  leave" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
@@ -375,6 +373,21 @@ public class Client extends EscapeSequences implements NotificationHandler{
             } else if (playerColor.equals(ChessGame.TeamColor.BLACK)){
                 new ChessBoardUI(((LoadGame) notification).getGame()).createBlackChessBoard();
             }
+
+            if (currentGameState.isInCheck(ChessGame.TeamColor.WHITE)){
+                System.out.println("WHITE is in Check");
+            } else if (currentGameState.isInCheck(ChessGame.TeamColor.BLACK)){
+                System.out.println("BLACK is in Check");
+            } else if(currentGameState.isInCheckmate(ChessGame.TeamColor.WHITE)){
+                System.out.println("WHITE is in CheckMate\n");
+                checkMate = true;
+            } else if(currentGameState.isInCheckmate(ChessGame.TeamColor.BLACK)){
+                System.out.println("BLACK is in CheckMate\n");
+                checkMate = true;
+            } else {
+                checkMate = false;
+            }
+
             System.out.printf("It is %s's turn\n", currentGameState.getTeamTurn().toString());
         }
     }
