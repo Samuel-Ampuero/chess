@@ -7,7 +7,9 @@ import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class ChessBoardUI extends EscapeSequences {
@@ -15,7 +17,7 @@ public class ChessBoardUI extends EscapeSequences {
     private ChessGame chessGame;
     private ChessBoard chessBoard;
     //private Collection<Pair<Integer, Integer>> validMoves = new ArrayList<>();
-    private HashMap<Integer, Integer> validMoves = new HashMap<>();
+    private HashMap<Integer, List<Integer>> validMoves = new HashMap<>();
 
     public ChessBoardUI(ChessGame game){
         chessGame = game;
@@ -56,7 +58,7 @@ public class ChessBoardUI extends EscapeSequences {
         out.print(ERASE_SCREEN);
 
         for (var r :chessGame.validMoves(position)){
-            validMoves.put(r.getEndPosition().getRow(),r.getEndPosition().getColumn());
+            validMoves.computeIfAbsent(r.getEndPosition().getRow(), k -> new ArrayList<>()).add(r.getEndPosition().getColumn());
         }
 
         String[] letters = {"\u2002\u2009a\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002\u2009c\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002f\u2009\u2002", "\u2002\u2009g\u2009\u2002", "\u2002h\u2009\u2002"};
@@ -70,7 +72,7 @@ public class ChessBoardUI extends EscapeSequences {
         out.print(ERASE_SCREEN);
 
         for (var r :chessGame.validMoves(position)){
-            validMoves.put(r.getEndPosition().getRow(),r.getEndPosition().getColumn());
+            validMoves.computeIfAbsent(r.getEndPosition().getRow(), k -> new ArrayList<>()).add(r.getEndPosition().getColumn());
         }
 
         String[] letters = {"\u2002\u2009h\u2009\u2002", "\u2002\u2009g\u2009\u2002", "\u2002\u2009f\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002c\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002a\u2009\u2002"};
@@ -105,32 +107,12 @@ public class ChessBoardUI extends EscapeSequences {
                     out.print("\u2002\u2009" + i + "\u2009\u2002");
                 }
                 else {
-                    whiteChessSpace(i, j);
+                    whiteChessSpace(i, j, SET_BG_COLOR_WHITE, SET_BG_COLOR_GREEN);
 
                 }
             }
             out.print(SET_BG_COLOR_BLACK);
             out.println();
-        }
-    }
-
-    private void whiteChessSpace(int i, int j) {
-        if (i % 2 == 0){
-            if (j % 2 == 1) {
-                out.print(SET_BG_COLOR_WHITE);
-                out.print(evaluatePiece(i,j));
-            } else {
-                out.print(SET_BG_COLOR_GREEN);
-                out.print(evaluatePiece(i,j));
-            }
-        } else {
-            if (j % 2 == 0) {
-                out.print(SET_BG_COLOR_WHITE);
-                out.print(evaluatePiece(i,j));
-            } else {
-                out.print(SET_BG_COLOR_GREEN);
-                out.print(evaluatePiece(i,j));
-            }
         }
     }
 
@@ -143,31 +125,11 @@ public class ChessBoardUI extends EscapeSequences {
                     out.print("\u2002\u2009" + i + "\u2009\u2002");
                 }
                 else {
-                    blackChessSpace(i, j);
+                    blackChessSpace(i, j, SET_BG_COLOR_WHITE, SET_BG_COLOR_GREEN);
                 }
             }
             out.print(SET_BG_COLOR_BLACK);
             out.println();
-        }
-    }
-
-    private void blackChessSpace(int i, int j) {
-        if (i % 2 == 1){
-            if (j % 2 == 0) {
-                out.print(SET_BG_COLOR_WHITE);
-                out.print(evaluatePiece(i,j));
-            } else {
-                out.print(SET_BG_COLOR_GREEN);
-                out.print(evaluatePiece(i,j));
-            }
-        } else {
-            if (j % 2 == 1) {
-                out.print(SET_BG_COLOR_WHITE);
-                out.print(evaluatePiece(i,j));
-            } else {
-                out.print(SET_BG_COLOR_GREEN);
-                out.print(evaluatePiece(i,j));
-            }
         }
     }
 
@@ -180,11 +142,14 @@ public class ChessBoardUI extends EscapeSequences {
                     out.print("\u2002\u2009" + i + "\u2009\u2002");
                 }
                 else {
-                    //FIXME:: NEED TO FIX SO THAT THE COLORS ALTERNATE AND THE PIECE'S SPACE GETS COLORED (YELLOW)
-                    if (validMoves.containsKey(i) && validMoves.get(i) == j){
+                    if (i == position.getRow() && j == position.getColumn()) {
+                        out.print(SET_BG_COLOR_YELLOW);
+                        out.print(evaluatePiece(i, j));
+                        continue;
+                    }
+                    if (validMoves.containsKey(i) && validMoves.get(i).contains(j)){
                         if (Objects.equals(evaluatePiece(i, j), EMPTY)) {
-                            out.print(SET_BG_COLOR_BLUE);
-                            out.print(EMPTY);
+                            whiteChessSpace(i, j, SET_BG_COLOR_BLUE, SET_BG_COLOR_DARK_BLUE);
                         } else {
                             out.print(SET_BG_COLOR_RED);
                             out.print(evaluatePiece(i, j));
@@ -192,7 +157,7 @@ public class ChessBoardUI extends EscapeSequences {
                         continue;
                     }
 
-                    whiteChessSpace(i, j);
+                    whiteChessSpace(i, j, SET_BG_COLOR_WHITE, SET_BG_COLOR_GREEN);
 
                 }
             }
@@ -200,6 +165,27 @@ public class ChessBoardUI extends EscapeSequences {
             out.println();
         }
     }
+
+    private void whiteChessSpace(int i, int j, String setBgColorLighter, String setBgColorDarker) {
+        if (i % 2 == 0){
+            if (j % 2 == 1) {
+                out.print(setBgColorLighter);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(setBgColorDarker);
+                out.print(evaluatePiece(i,j));
+            }
+        } else {
+            if (j % 2 == 0) {
+                out.print(setBgColorLighter);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(setBgColorDarker);
+                out.print(evaluatePiece(i,j));
+            }
+        }
+    }
+
     public void printBlackChessBoardHighlight(ChessPosition position){
         for (int i = 1; i <= 8; i++){
             for (int j = 9; j >= 0; j--){
@@ -209,11 +195,15 @@ public class ChessBoardUI extends EscapeSequences {
                     out.print("\u2002\u2009" + i + "\u2009\u2002");
                 }
                 else {
-                    //FIXME:: NEED TO FIX SO THAT THE COLORS ALTERNATE AND THE PIECE'S SPACE GETS COLORED (YELLOW)
-                    if (validMoves.containsKey(i) && validMoves.get(i) == j){
+                    if (i == position.getRow() && j == position.getColumn()) {
+                        out.print(SET_BG_COLOR_YELLOW);
+                        out.print(evaluatePiece(i, j));
+                        continue;
+                    }
+
+                    if (validMoves.containsKey(i) && validMoves.get(i).contains(j)){
                         if (Objects.equals(evaluatePiece(i, j), EMPTY)) {
-                            out.print(SET_BG_COLOR_BLUE);
-                            out.print(EMPTY);
+                            blackChessSpace(i, j, SET_BG_COLOR_BLUE, SET_BG_COLOR_DARK_BLUE);
                         } else {
                             out.print(SET_BG_COLOR_RED);
                             out.print(evaluatePiece(i, j));
@@ -221,12 +211,32 @@ public class ChessBoardUI extends EscapeSequences {
                         continue;
                     }
 
-                    blackChessSpace(i, j);
+                    blackChessSpace(i, j, SET_BG_COLOR_WHITE, SET_BG_COLOR_GREEN);
 
                 }
             }
             out.print(SET_BG_COLOR_BLACK);
             out.println();
+        }
+    }
+
+    private void blackChessSpace(int i, int j, String setBgColorLighter, String setBgColorDarker) {
+        if (i % 2 == 1){
+            if (j % 2 == 0) {
+                out.print(setBgColorLighter);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(setBgColorDarker);
+                out.print(evaluatePiece(i,j));
+            }
+        } else {
+            if (j % 2 == 1) {
+                out.print(setBgColorLighter);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(setBgColorDarker);
+                out.print(evaluatePiece(i,j));
+            }
         }
     }
 
