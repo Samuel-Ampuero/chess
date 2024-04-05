@@ -84,11 +84,6 @@ public class WebSocketHandler {
     private void makeMove(MakeMove move, Session session) throws IOException {
         //Error cases
         try {
-//            if (!Objects.equals(authMemory.getAuth(move.getAuthString()).username(), gameMemory.getGame(move.getGameID()).whiteUsername())
-//                    || !Objects.equals(authMemory.getAuth(move.getAuthString()).username(), gameMemory.getGame(move.getGameID()).blackUsername())) {
-//                session.getRemote().sendString(new Error("Error: You are an observer, you cannot make moves").toString());
-//                return;
-//            }
             if (!gameMemory.getGame(move.getGameID()).game().validMoves(move.getMove().getStartPosition()).contains(move.getMove())) {
                 session.getRemote().sendString(new Error("Error: Invalid Move").toString());
                 return;

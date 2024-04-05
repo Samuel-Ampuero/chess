@@ -16,7 +16,6 @@ public class ChessBoardUI extends EscapeSequences {
     private PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     private ChessGame chessGame;
     private ChessBoard chessBoard;
-    //private Collection<Pair<Integer, Integer>> validMoves = new ArrayList<>();
     private HashMap<Integer, List<Integer>> validMoves = new HashMap<>();
 
     public ChessBoardUI(ChessGame game){

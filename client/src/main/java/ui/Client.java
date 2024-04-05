@@ -217,22 +217,24 @@ public class Client extends EscapeSequences implements NotificationHandler{
             if (!gameList.containsKey(Integer.parseInt(params[0]))){
                 throw new ResponseException(400, "Game does not exist\n");
             }
-            GameData game = server.join(new JoinGameRequest(params[1].toUpperCase(), gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
-            ws = new WebSocketFacade(url, this);
 
             if (params[1].equalsIgnoreCase("WHITE")) {
                 playerColor = ChessGame.TeamColor.WHITE;
-                ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), ChessGame.TeamColor.WHITE);
             } else {
                 playerColor = ChessGame.TeamColor.BLACK;
-                ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), ChessGame.TeamColor.BLACK);
             }
+
+            if ((playerColor == ChessGame.TeamColor.WHITE && !Objects.equals(gameList.get(Integer.parseInt(params[0])).whiteUsername(), visitorName))
+                    || (playerColor == ChessGame.TeamColor.BLACK &&!Objects.equals(gameList.get(Integer.parseInt(params[0])).blackUsername(), visitorName))){
+                server.join(new JoinGameRequest(params[1].toUpperCase(), gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
+            }
+
+            ws = new WebSocketFacade(url, this);
+            ws.joinPlayer(authToken, gameList.get(Integer.parseInt(params[0])).gameID(), playerColor);
 
             System.out.printf("Successfully joined game #%s. Please type help for commands\n", params[0]);
             connected = true;
             joinedGameID = gameList.get(Integer.parseInt(params[0])).gameID();
-            currentGameState = game.game();
-
             return "";
         }
         throw new ResponseException(400, "Expected: <gameID> [WHITE|BLACK]\n");
@@ -339,9 +341,6 @@ public class Client extends EscapeSequences implements NotificationHandler{
             return "";
         } else if (state == State.SIGNEDIN && connected && observing) {
             out.println(SET_TEXT_COLOR_BLUE + "  redraw" + "\u001b[0m" + " - chess board");
-//            out.println(SET_TEXT_COLOR_BLUE + "  highlight <POSITION>" + "\u001b[0m" + " - legal moves of specified piece");
-//            out.println(SET_TEXT_COLOR_BLUE + "  make <MOVE> [PROMOTION | <empty>]" + "\u001b[0m" + " - on board e.g. b2b1 or b2b1 \"queen\".\n\t\tAccepted promotions: \"queen\", \"bishop\", \"knight\", and \"rook\" without quotes");
-//            out.println(SET_TEXT_COLOR_BLUE + "  resign" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  leave" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
             return "";
@@ -376,7 +375,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
             } else if (playerColor.equals(ChessGame.TeamColor.BLACK)){
                 new ChessBoardUI(((LoadGame) notification).getGame()).createBlackChessBoard();
             }
-
+            System.out.printf("It is %s's turn\n", currentGameState.getTeamTurn().toString());
         }
     }
 }
