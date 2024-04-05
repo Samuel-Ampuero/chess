@@ -1,14 +1,21 @@
 package ui;
 
-import chess.*;
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class ChessBoardUI extends EscapeSequences {
     private PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     private ChessGame chessGame;
     private ChessBoard chessBoard;
+    //private Collection<Pair<Integer, Integer>> validMoves = new ArrayList<>();
+    private HashMap<Integer, Integer> validMoves = new HashMap<>();
 
     public ChessBoardUI(ChessGame game){
         chessGame = game;
@@ -45,6 +52,34 @@ public class ChessBoardUI extends EscapeSequences {
         out.print("\u001b[0m");
     }
 
+    public void whiteChessBoardHighlight(ChessPosition position){
+        out.print(ERASE_SCREEN);
+
+        for (var r :chessGame.validMoves(position)){
+            validMoves.put(r.getEndPosition().getRow(),r.getEndPosition().getColumn());
+        }
+
+        String[] letters = {"\u2002\u2009a\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002\u2009c\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002f\u2009\u2002", "\u2002\u2009g\u2009\u2002", "\u2002h\u2009\u2002"};
+        printHeaders(letters);
+        printWhiteChessBoardHighlight(position);
+        printHeaders(letters);
+        out.print("\u001b[0m");
+    }
+
+    public void blackChessBoardHighlight(ChessPosition position){
+        out.print(ERASE_SCREEN);
+
+        for (var r :chessGame.validMoves(position)){
+            validMoves.put(r.getEndPosition().getRow(),r.getEndPosition().getColumn());
+        }
+
+        String[] letters = {"\u2002\u2009h\u2009\u2002", "\u2002\u2009g\u2009\u2002", "\u2002\u2009f\u2009\u2002", "\u2002\u2009e\u2009\u2002", "\u2002\u2009d\u2009\u2002", "\u2002c\u2009\u2002", "\u2002\u2009b\u2009\u2002", "\u2002a\u2009\u2002"};
+        printHeaders(letters);
+        printBlackChessBoardHighlight(position);
+        printHeaders(letters);
+        out.print("\u001b[0m");
+    }
+
     public void printHeaders(String[] headers){
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
@@ -70,23 +105,7 @@ public class ChessBoardUI extends EscapeSequences {
                     out.print("\u2002\u2009" + i + "\u2009\u2002");
                 }
                 else {
-                    if (i % 2 == 0){
-                        if (j % 2 == 1) {
-                            out.print(SET_BG_COLOR_WHITE);
-                            out.print(evaluatePiece(i,j));
-                        } else {
-                            out.print(SET_BG_COLOR_GREEN);
-                            out.print(evaluatePiece(i,j));
-                        }
-                    } else {
-                        if (j % 2 == 0) {
-                            out.print(SET_BG_COLOR_WHITE);
-                            out.print(evaluatePiece(i,j));
-                        } else {
-                            out.print(SET_BG_COLOR_GREEN);
-                            out.print(evaluatePiece(i,j));
-                        }
-                    }
+                    whiteChessSpace(i, j);
 
                 }
             }
@@ -94,6 +113,27 @@ public class ChessBoardUI extends EscapeSequences {
             out.println();
         }
     }
+
+    private void whiteChessSpace(int i, int j) {
+        if (i % 2 == 0){
+            if (j % 2 == 1) {
+                out.print(SET_BG_COLOR_WHITE);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(SET_BG_COLOR_GREEN);
+                out.print(evaluatePiece(i,j));
+            }
+        } else {
+            if (j % 2 == 0) {
+                out.print(SET_BG_COLOR_WHITE);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(SET_BG_COLOR_GREEN);
+                out.print(evaluatePiece(i,j));
+            }
+        }
+    }
+
     public void printBlackChessBoard(){
         for (int i = 1; i <= 8; i++){
             for (int j = 9; j >= 0; j--){
@@ -103,23 +143,85 @@ public class ChessBoardUI extends EscapeSequences {
                     out.print("\u2002\u2009" + i + "\u2009\u2002");
                 }
                 else {
-                    if (i % 2 == 1){
-                        if (j % 2 == 0) {
-                            out.print(SET_BG_COLOR_WHITE);
-                            out.print(evaluatePiece(i,j));
+                    blackChessSpace(i, j);
+                }
+            }
+            out.print(SET_BG_COLOR_BLACK);
+            out.println();
+        }
+    }
+
+    private void blackChessSpace(int i, int j) {
+        if (i % 2 == 1){
+            if (j % 2 == 0) {
+                out.print(SET_BG_COLOR_WHITE);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(SET_BG_COLOR_GREEN);
+                out.print(evaluatePiece(i,j));
+            }
+        } else {
+            if (j % 2 == 1) {
+                out.print(SET_BG_COLOR_WHITE);
+                out.print(evaluatePiece(i,j));
+            } else {
+                out.print(SET_BG_COLOR_GREEN);
+                out.print(evaluatePiece(i,j));
+            }
+        }
+    }
+
+    public void printWhiteChessBoardHighlight(ChessPosition position){
+        for (int i = 8; i > 0; i--){
+            for (int j = 0; j < 10; j++){
+                if (j == 0 || j == 9) {
+                    out.print(SET_BG_COLOR_LIGHT_GREY);
+                    out.print(SET_TEXT_COLOR_BLACK);
+                    out.print("\u2002\u2009" + i + "\u2009\u2002");
+                }
+                else {
+                    //FIXME:: NEED TO FIX SO THAT THE COLORS ALTERNATE AND THE PIECE'S SPACE GETS COLORED (YELLOW)
+                    if (validMoves.containsKey(i) && validMoves.get(i) == j){
+                        if (Objects.equals(evaluatePiece(i, j), EMPTY)) {
+                            out.print(SET_BG_COLOR_BLUE);
+                            out.print(EMPTY);
                         } else {
-                            out.print(SET_BG_COLOR_GREEN);
-                            out.print(evaluatePiece(i,j));
+                            out.print(SET_BG_COLOR_RED);
+                            out.print(evaluatePiece(i, j));
                         }
-                    } else {
-                        if (j % 2 == 1) {
-                            out.print(SET_BG_COLOR_WHITE);
-                            out.print(evaluatePiece(i,j));
-                        } else {
-                            out.print(SET_BG_COLOR_GREEN);
-                            out.print(evaluatePiece(i,j));
-                        }
+                        continue;
                     }
+
+                    whiteChessSpace(i, j);
+
+                }
+            }
+            out.print(SET_BG_COLOR_BLACK);
+            out.println();
+        }
+    }
+    public void printBlackChessBoardHighlight(ChessPosition position){
+        for (int i = 1; i <= 8; i++){
+            for (int j = 9; j >= 0; j--){
+                if (j == 0 || j == 9) {
+                    out.print(SET_BG_COLOR_LIGHT_GREY);
+                    out.print(SET_TEXT_COLOR_BLACK);
+                    out.print("\u2002\u2009" + i + "\u2009\u2002");
+                }
+                else {
+                    //FIXME:: NEED TO FIX SO THAT THE COLORS ALTERNATE AND THE PIECE'S SPACE GETS COLORED (YELLOW)
+                    if (validMoves.containsKey(i) && validMoves.get(i) == j){
+                        if (Objects.equals(evaluatePiece(i, j), EMPTY)) {
+                            out.print(SET_BG_COLOR_BLUE);
+                            out.print(EMPTY);
+                        } else {
+                            out.print(SET_BG_COLOR_RED);
+                            out.print(evaluatePiece(i, j));
+                        }
+                        continue;
+                    }
+
+                    blackChessSpace(i, j);
 
                 }
             }

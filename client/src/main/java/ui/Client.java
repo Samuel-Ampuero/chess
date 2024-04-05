@@ -25,6 +25,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
     private boolean connected = false;
     private boolean observing = false;
     private String authToken;
+    private ChessGame currentGameState;
     private ChessGame.TeamColor playerColor;
     private int joinedGameID;
 
@@ -128,7 +129,8 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
-                //case "redraw" -> redrawBoard();
+                case "redraw" -> redrawBoard();
+                case "highlight" -> highlightMoves(params);
                 case "make" -> makeMove(params);
                 case "delete_all_data" -> clear();
                 case "quit" -> "quit";
@@ -229,6 +231,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
             System.out.printf("Successfully joined game #%s. Please type help for commands\n", params[0]);
             connected = true;
             joinedGameID = gameList.get(Integer.parseInt(params[0])).gameID();
+            currentGameState = game.game();
 
             return "";
         }
@@ -252,29 +255,45 @@ public class Client extends EscapeSequences implements NotificationHandler{
             connected = true;
             observing = true;
             joinedGameID = gameList.get(Integer.parseInt(params[0])).gameID();
+            currentGameState = game.game();
+
             return "";
         }
         throw new ResponseException(400, "Expected: <gameID>\n");
     }
 
-//    public String redrawBoard() throws ResponseException {
-//        assertSignedIn();
-//        assertConnected();
-//
-////        if (!gameList.containsKey(Integer.parseInt(params[0]))){
-////            throw new ResponseException(400, "Game does not exist\n");
-////        }
-//
-////        GameData game = server.join(new JoinGameRequest(null, gameList.get(Integer.parseInt(params[0])).gameID()), authToken);
-//        //playerColor = ChessGame.TeamColor.WHITE;
-//        //ws = new WebSocketFacade(url, this);
-//        ws.redrawBoard(authToken, joinedGameID);
-//
-//        System.out.printf("Observing game #%s\n", params[0]);
-//        connected = true;
-//        joinedGameID = gameList.get(Integer.parseInt(params[0])).gameID();
-//        return "";
-//    }
+    public String redrawBoard() throws ResponseException {
+        assertSignedIn();
+        assertConnected();
+
+        if (playerColor.equals(ChessGame.TeamColor.WHITE)){
+            new ChessBoardUI(currentGameState).createWhiteChessBoard();
+        } else if (playerColor.equals(ChessGame.TeamColor.BLACK)){
+            new ChessBoardUI(currentGameState).createBlackChessBoard();
+        }
+        return "";
+    }
+
+    public String highlightMoves(String... params) throws ResponseException {
+        assertSignedIn();
+        assertConnected();
+        assertNotObserving();
+        if (params.length == 1 && params[0].length() == 2 && Character.isLetter(params[0].charAt(0)) && Character.isDigit(params[0].charAt(1))) {
+
+            if (currentGameState.getBoard().getPiece(new ChessPosition(Integer.parseInt(params[0].substring(1,2)), chessLetters.get(params[0].substring(0,1)))) == null){
+                throw new ResponseException(400, "Invalid Position\n");
+            }
+
+            if (playerColor.equals(ChessGame.TeamColor.WHITE)){
+                new ChessBoardUI(currentGameState).whiteChessBoardHighlight(new ChessPosition(Integer.parseInt(params[0].substring(1,2)), chessLetters.get(params[0].substring(0,1))));
+            } else if (playerColor.equals(ChessGame.TeamColor.BLACK)){
+                new ChessBoardUI(currentGameState).blackChessBoardHighlight(new ChessPosition(Integer.parseInt(params[0].substring(1,2)), chessLetters.get(params[0].substring(0,1))));
+            }
+
+            return "";
+        }
+        throw new ResponseException(400, "Expected: <POSITION>\n");
+    }
 
     public String makeMove(String... params) throws ResponseException {
         assertSignedIn();
@@ -295,7 +314,6 @@ public class Client extends EscapeSequences implements NotificationHandler{
                         new ChessPosition(Integer.parseInt(params[0].substring(3)), chessLetters.get(params[0].substring(2,3))),promotions.get(params[1])));
             }
 
-            //System.out.println("Successful Move!");
             return "";
         }
         throw new ResponseException(400, "Expected: <MOVE> [PROMOTION | <empty>] e.g. b2b1 or b2b1 \"queen\"\n");
@@ -329,8 +347,8 @@ public class Client extends EscapeSequences implements NotificationHandler{
             return "";
         } else if (state == State.SIGNEDIN && connected) {
             out.println(SET_TEXT_COLOR_BLUE + "  redraw" + "\u001b[0m" + " - chess board");
-            out.println(SET_TEXT_COLOR_BLUE + "  highlight <POSITION>" + "\u001b[0m" + " - legal moves of specified piece");
-            out.println(SET_TEXT_COLOR_BLUE + "  make <MOVE> [PROMOTION | <empty>]" + "\u001b[0m" + " - on board e.g. b2b1 or b2b1 \"queen\".\n\t\tAccepted promotions: \"queen\", \"bishop\", \"knight\", and \"rook\" without quotes");
+            out.println(SET_TEXT_COLOR_BLUE + "  highlight <POSITION>" + "\u001b[0m" + " - legal moves of specified piece e.g. b2");
+            out.println(SET_TEXT_COLOR_BLUE + "  make <MOVE> [PROMOTION | <empty>]" + "\u001b[0m" + " - on board e.g. b2b1 or b2b1 \"queen\".\n\t\t\tAccepted promotions: \"queen\", \"bishop\", \"knight\", and \"rook\" without quotes");
             out.println(SET_TEXT_COLOR_BLUE + "  resign" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  leave" + "\u001b[0m" + " - the game");
             out.println(SET_TEXT_COLOR_BLUE + "  help" + "\u001b[0m" + " - with possible commands");
@@ -352,6 +370,7 @@ public class Client extends EscapeSequences implements NotificationHandler{
         } else if (notification instanceof Error) {
             System.out.println(SET_TEXT_COLOR_RED + ((Error) notification).getErrorMessage() + "\u001b[0m");
         } else if (notification instanceof LoadGame) {
+            currentGameState = ((LoadGame) notification).getGame();
             if (playerColor.equals(ChessGame.TeamColor.WHITE)){
                 new ChessBoardUI(((LoadGame) notification).getGame()).createWhiteChessBoard();
             } else if (playerColor.equals(ChessGame.TeamColor.BLACK)){
