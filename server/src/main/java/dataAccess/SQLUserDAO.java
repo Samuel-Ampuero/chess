@@ -79,10 +79,12 @@ public class SQLUserDAO implements UserDAO{
             try {
                 var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS);
                 try {
-                    for (var i = params.length - 1; i >= 0; i--) {
+                    var i = 0;
+                    while (!(params.length <= i)) {
                         var param = params[i];
                         if (param instanceof String p) ps.setString(i + 1, p);
                         else if (param == null) ps.setNull(i + 1, NULL);
+                        i++;
                     }
                     ps.executeUpdate();
 
