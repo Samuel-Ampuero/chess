@@ -23,16 +23,6 @@ public class ChessBoardUI extends EscapeSequences {
         chessBoard = game.getBoard();
     }
 
-    public void printBoards() {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
-        ChessBoardUI test = new ChessBoardUI(chessGame);
-        test.createBlackChessBoard();
-        out.println();
-        test.createWhiteChessBoard();
-        out.print("\u001b[0m");
-    }
-
     public void createWhiteChessBoard(){
         out.print(ERASE_SCREEN);
 
