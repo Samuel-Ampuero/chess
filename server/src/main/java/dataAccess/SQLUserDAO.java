@@ -115,6 +115,10 @@ public class SQLUserDAO implements UserDAO{
     };
 
     private void configureDatabase() throws DataAccessException {
+        configureHelper(createStatements);
+    }
+
+    static void configureHelper(String[] createStatements) throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {

@@ -209,21 +209,21 @@ public class ChessBoardUI extends EscapeSequences {
         }
     }
 
-    private void blackChessSpace(int i, int j, String setBgColorLighter, String setBgColorDarker) {
+    private void blackChessSpace(int i, int j, String lighterColor, String darkerColor) {
         if (i % 2 == 1){
             if (j % 2 == 0) {
-                out.print(setBgColorLighter);
+                out.print(lighterColor);
                 out.print(evaluatePiece(i,j));
             } else {
-                out.print(setBgColorDarker);
+                out.print(darkerColor);
                 out.print(evaluatePiece(i,j));
             }
         } else {
             if (j % 2 == 1) {
-                out.print(setBgColorLighter);
+                out.print(lighterColor);
                 out.print(evaluatePiece(i,j));
             } else {
-                out.print(setBgColorDarker);
+                out.print(darkerColor);
                 out.print(evaluatePiece(i,j));
             }
         }
