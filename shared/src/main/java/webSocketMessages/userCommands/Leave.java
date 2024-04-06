@@ -12,4 +12,6 @@ public class Leave extends UserGameCommand{
     public String toString() {
         return new Gson().toJson(this);
     }
+
+    public int getGameID(){return gameID;}
 }

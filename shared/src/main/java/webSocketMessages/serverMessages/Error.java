@@ -4,11 +4,10 @@ import com.google.gson.Gson;
 
 public class Error extends ServerMessage{
     String errorMessage;
-    ServerMessage serverMessage;
 
     public Error(String errorMessage){
+        super(ServerMessageType.ERROR);
         this.errorMessage = errorMessage;
-        serverMessage = new ServerMessage(ServerMessageType.ERROR);
     }
 
     public String toString() {

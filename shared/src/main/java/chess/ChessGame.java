@@ -11,6 +11,7 @@ import java.util.*;
 public class ChessGame{
     private ChessBoard board;
     private TeamColor teamTurn;
+    private boolean gameOver = false;
     private boolean whiteRookKingSideMoved = false;
     private boolean whiteRookQueenSideMoved = false;
     private boolean blackRookKingSideMoved = false;
@@ -40,6 +41,12 @@ public class ChessGame{
      */
     public TeamColor getTeamTurn() {
         return teamTurn;
+    }
+
+    public void setGameOver(){gameOver = true;}
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     /**

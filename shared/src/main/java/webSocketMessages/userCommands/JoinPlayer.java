@@ -17,4 +17,5 @@ public class JoinPlayer extends UserGameCommand{
         return new Gson().toJson(this);
     }
     public int getGameID(){return gameID;}
+    public ChessGame.TeamColor getPlayerColor(){return playerColor;}
 }

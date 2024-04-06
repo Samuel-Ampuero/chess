@@ -324,6 +324,10 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 throw new ResponseException(400, "Promotion invalid");
             }
 
+            if (currentGameState.getBoard().getPiece(new ChessPosition(Integer.parseInt(params[0].substring(1,2)), chessLetters.get(params[0].substring(0,1)))) == null) {
+                throw new ResponseException(400, "Invalid Move\n");
+            }
+
             if (params.length == 1) {
                 ws.makeMove(authToken, joinedGameID, new ChessMove(new ChessPosition(Integer.parseInt(params[0].substring(1,2)), chessLetters.get(params[0].substring(0,1))),
                         new ChessPosition(Integer.parseInt(params[0].substring(3)), chessLetters.get(params[0].substring(2,3))),null));
@@ -331,6 +335,8 @@ public class Client extends EscapeSequences implements NotificationHandler{
                 ws.makeMove(authToken, joinedGameID, new ChessMove(new ChessPosition(Integer.parseInt(params[0].substring(1,2)), chessLetters.get(params[0].substring(0,1))),
                         new ChessPosition(Integer.parseInt(params[0].substring(3)), chessLetters.get(params[0].substring(2,3))),promotions.get(params[1])));
             }
+
+            System.out.println("Successful Move!");
 
             return "";
         }
